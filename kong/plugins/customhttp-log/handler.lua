@@ -81,7 +81,7 @@ end
 
 -- Only provide `name` when deriving from this class. Not when initializing an instance.
 function CustomHttpLogHandler:new(name)
-  CustomHttpLogHandler.super.new(self, name or "http-log")
+  CustomHttpLogHandler.super.new(self, name or "customhttp-log")
 end
 
 -- serializes context data into an html message body

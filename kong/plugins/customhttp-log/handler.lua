@@ -112,7 +112,7 @@ local function create_req()
     request = {
       httpVersion = http_version,
       method = req_get_method(),
-      url = ngx..var.scheme .. "://" .. ngx..var.host .. ngx.var.request_uri,
+      url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.request_uri,
       queryString = hash_to_array(req_get_uri_args()),
       headers = hash_to_array(request_headers),
       headersSize = #req_raw_header(),

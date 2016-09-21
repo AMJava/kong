@@ -48,7 +48,7 @@ local function parse_url(host_url)
   return parsed_url
 end
 
-local function create_req(host_url)
+local function create_req()
   return true
 end
 

@@ -10,7 +10,8 @@ local _mt = {
 function _M.new(conf)
   if type(conf) ~= "table" then
     return nil, "arg #1 (conf) must be a table"
-
+  end
+  
   local sender = {
     http_endpoint       = conf.http_endpoint,
     method              = conf.method,

@@ -1,57 +1,117 @@
+local basic_serializer = require "kong.plugins.log-serializers.basic"
 local BasePlugin = require "kong.plugins.base_plugin"
-local Sender = require "kong.plugins.customhttp-log.sender"
-
-local read_body = ngx.req.read_body
-local get_body_data = ngx.req.get_body_data
+local cjson = require "cjson"
+local url = require "socket.url"
 
 local CustomHttpLogHandler = BasePlugin:extend()
 
 CustomHttpLogHandler.PRIORITY = 1
 
+local HTTPS = "https"
+local resp_get_headers = ngx.resp.get_headers
+local req_start_time = ngx.req.start_time
+local req_get_method = ngx.req.get_method
+local req_get_headers = ngx.req.get_headers
+local req_get_uri_args = ngx.req.get_uri_args
+local req_raw_header = ngx.req.raw_header
+local encode_base64 = ngx.encode_base64
+local http_version = ngx.req.http_version
+
+entries = {}
+
+-- Generates http payload .
+-- @param `method` http method to be used to send data
+-- @param `parsed_url` contains the host details
+-- @param `message`  Message to be logged
+-- @return `body` http payload
+local function generate_post_payload(method, parsed_url, body)
+  return string.format(
+    "%s %s HTTP/1.1\r\nHost: %s\r\nConnection: Keep-Alive\r\nContent-Type: application/json\r\nContent-Length: %s\r\n\r\n%s",
+    method:upper(), parsed_url.path, parsed_url.host, string.len(body), body)
+end
+
+-- Parse host url
+-- @param `url`  host url
+-- @return `parsed_url`  a table with host details like domain name, port, path etc
+local function parse_url(host_url)
+  local parsed_url = url.parse(host_url)
+  if not parsed_url.port then
+    if parsed_url.scheme == "http" then
+      parsed_url.port = 80
+     elseif parsed_url.scheme == HTTPS then
+      parsed_url.port = 443
+     end
+  end
+  if not parsed_url.path then
+    parsed_url.path = "/"
+  end
+  return parsed_url
+end
+
+local function create_req(host_url)
+  return true
+end
+
+-- Log to a Http end point.
+-- @param `premature`
+-- @param `conf`     Configuration table, holds http endpoint details
+-- @param `message`  Message to be logged
+local function log(premature, conf, body, name)
+  if premature then return end
+  name = "["..name.."] "
+  
+  local ok, err
+  local parsed_url = parse_url(conf.http_endpoint)
+  local host = parsed_url.host
+  local port = tonumber(parsed_url.port)
+
+  local sock = ngx.socket.tcp()
+  sock:settimeout(conf.timeout)
+
+  ok, err = sock:connect(host, port)
+  if not ok then
+    ngx.log(ngx.ERR, name.."failed to connect to 111"..host..":"..tostring(port)..": ", err)
+    return
+  end
+
+  if parsed_url.scheme == HTTPS then
+    local _, err = sock:sslhandshake(true, host, false)
+    if err then
+      ngx.log(ngx.ERR, name.."failed to do SSL handshake with "..host..":"..tostring(port)..": ", err)
+    end
+  end
+
+  ok, err = sock:send(generate_post_payload(conf.method, parsed_url, body))
+  if not ok then
+    ngx.log(ngx.ERR, name.."failed to send data to "..host..":"..tostring(port)..": ", err)
+  end
+
+  ok, err = sock:setkeepalive(conf.keepalive)
+  if not ok then
+    ngx.log(ngx.ERR, name.."failed to keepalive to "..host..":"..tostring(port)..": ", err)
+    return
+  end
+end
+
+-- Only provide `name` when deriving from this class. Not when initializing an instance.
 function CustomHttpLogHandler:new(name)
-  CustomHttpLogHandler.super.new(self, name or "customhttp-log")
+  CustomHttpLogHandler.super.new(self, name or "http-log")
 end
 
-function CustomHttpLogHandler:access(conf)
-  CustomHttpLogHandler.super.access(self)
-
-  if conf.log_bodies then
-    read_body()
-    ngx.ctx.galileo = {req_body = get_body_data()}
-  end
-end
-
-function CustomHttpLogHandler:body_filter(conf)
-  CustomHttpLogHandler.super.body_filter(self)
-
-  if conf.log_bodies then
-    local chunk = ngx.arg[1]
-    local ctx = ngx.ctx
-    local res_body = ctx.galileo and ctx.galileo.res_body or ""
-    res_body = res_body .. (chunk or "")
-    ctx.galileo.res_body = res_body
-  end
+-- serializes context data into an html message body
+-- @param `ngx` The context table for the request being logged
+-- @return html body as string
+function CustomHttpLogHandler:serialize(ngx)
+  return cjson.encode(basic_serializer.serialize(ngx))
 end
 
 function CustomHttpLogHandler:log(conf)
   CustomHttpLogHandler.super.log(self)
-  
-    local ctx = ngx.ctx
-    
-    local req_body, res_body
-    if ctx.galileo then
-      req_body = ctx.galileo.req_body
-      res_body = ctx.galileo.res_body
-    end
-    
-    local err
-    local senders
-    senders, err = Sender.new(conf)
-      if not senders then
-      ngx.log(ngx.ERR, "could not create ALF buffer: ", err)
-      return
-    end
-    senders:add_entry(ngx, req_body, res_body)
+  local request = create_req()
+  local ok, err = ngx.timer.at(0, log, conf, self:serialize(ngx), self._name)
+  if not ok then
+    ngx.log(ngx.ERR, "["..self._name.."] failed to create timer: ", err)
+  end
 end
 
 return CustomHttpLogHandler

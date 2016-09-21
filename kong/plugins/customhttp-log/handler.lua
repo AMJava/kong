@@ -39,6 +39,17 @@ local function parse_url(host_url)
   return parsed_url
 end
 
+-- Parse host url
+-- @param `url`  host url
+-- @return `parsed_url`  a table with host details like domain name, port, path etc
+local function send_message()
+    local request_headers = req_get_headers()
+  local ok, err = ngx.timer.at(0, log, conf, self:serialize(ngx), self._name)
+  if not ok then
+    ngx.log(ngx.ERR, "["..self._name.."] failed to create timer: ", err)
+  end
+end
+
 -- Log to a Http end point.
 -- @param `premature`
 -- @param `conf`     Configuration table, holds http endpoint details
@@ -46,7 +57,6 @@ end
 local function log(premature, conf, body, name)
   if premature then return end
   name = "["..name.."] "
-  local request_headers2 = req_get_headers()
   local ok, err
   local parsed_url = parse_url(conf.http_endpoint)
   local host = parsed_url.host
@@ -93,12 +103,7 @@ function CustomHttpLogHandler:serialize(ngx)
 end
 
 function CustomHttpLogHandler:log(conf)
-  CustomHttpLogHandler.super.log(self)
-    local request_headers = req_get_headers()
-  local ok, err = ngx.timer.at(0, log, conf, self:serialize(ngx), self._name)
-  if not ok then
-    ngx.log(ngx.ERR, "["..self._name.."] failed to create timer: ", err)
-  end
+  send_message()
 end
 
 return CustomHttpLogHandler

@@ -238,6 +238,7 @@ function serialize(request)
 end
 
 function CustomHttpLogHandler:log(conf)
+  local ctx = ngx.ctx
   CustomHttpLogHandler.super.log(self)
   local req_body, res_body
   if ctx.galileo then

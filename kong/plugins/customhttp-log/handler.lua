@@ -87,7 +87,26 @@ local function create_req()
   local req_has_body = tonumber(request_content_len) > 0
                        or request_transfer_encoding ~= nil
                        or request_content_type == "multipart/byteranges"
-                       
+  
+  if req_has_body then
+    if ngx.ctx.galileo.req_body then
+      req_body_size = #ngx.ctx.galileo.req_body
+      post_data = {
+        text = encode_base64(ngx.ctx.galileo.req_body),
+        encoding = "base64",
+        mimeType = request_content_type
+      }
+   end
+      if ngx.ctx.galileo.resp_body then
+      resp_body_size = #ngx.ctx.galileo.resp_body
+      response_content = {
+        text = encode_base64(#ngx.ctx.galileo.resp_body),
+        encoding = "base64",
+        mimeType = resp_content_type
+      }
+    end
+end
+
   local resp_headers = resp_get_headers()
   local resp_content_len = get_header(resp_headers, "content-length", 0)
   local resp_transfer_encoding = get_header(resp_headers, "transfer-encoding")
@@ -118,6 +137,7 @@ local function create_req()
       headersSize = #req_raw_header(),
       bodyCaptured = req_has_body,
       bodySize = req_body_size,
+      postData = post_data,
     },
     response = {
       status = ngx.status,
@@ -127,6 +147,7 @@ local function create_req()
       headersSize = 0,
       bodyCaptured = resp_has_body,
       bodySize = resp_body_size
+      content = response_content
     },
     timings = {
       send = send_t,
@@ -183,12 +204,30 @@ function CustomHttpLogHandler:new(name)
   CustomHttpLogHandler.super.new(self, name or "http-log")
 end
 
--- serializes context data into an html message body
--- @param `ngx` The context table for the request being logged
--- @return html body as string
---function CustomHttpLogHandler:serialize(request)
---  return cjson.encode(basic_serializer.serialize(request))
---end
+function CustomHttpLogHandler:access(conf)
+  CustomHttpLogHandler.super.access(self)
+
+  if not _server_addr then
+    _server_addr = ngx.var.server_addr
+  end
+
+  if conf.log_bodies then
+    read_body()
+    ngx.ctx.galileo = {req_body = get_body_data()}
+  end
+end
+
+function CustomHttpLogHandler:body_filter(conf)
+  CustomHttpLogHandler.super.body_filter(self)
+
+  if conf.log_bodies then
+    local chunk = ngx.arg[1]
+    local ctx = ngx.ctx
+    local res_body = ctx.galileo and ctx.galileo.res_body or ""
+    res_body = res_body .. (chunk or "")
+    ctx.galileo.res_body = res_body
+  end
+end
 
 function serialize(request)
   local json = cjson.encode(request)

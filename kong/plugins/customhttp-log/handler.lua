@@ -92,7 +92,9 @@ local function create_req(req_body_str,resp_body_str)
                        or request_content_type == "multipart/byteranges"
   
   if req_has_body then
+    ngx.log(ngx.ERR, "TEST1", "")
     if req_body_str then
+      ngx.log(ngx.ERR, "TEST2", "")
       req_body_size = #req_body_str
       post_data = {
         text = encode_base64(req_body_str),
@@ -101,6 +103,7 @@ local function create_req(req_body_str,resp_body_str)
       }
    end
       if resp_body_str then
+        ngx.log(ngx.ERR, "TEST3", "")
       resp_body_size = #resp_body_str
       response_content = {
         text = encode_base64(#resp_body_str),

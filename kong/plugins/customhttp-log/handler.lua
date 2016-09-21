@@ -78,7 +78,7 @@ local function get_header(t, name, default)
   return v
 end
 
-local function create_req(req_body_str,resp_body_str)
+local function create_req(log_bodies,req_body_str,resp_body_str)
   local http_version = "HTTP/"..http_version()
   
   local request_headers = req_get_headers()
@@ -91,7 +91,7 @@ local function create_req(req_body_str,resp_body_str)
                        or request_transfer_encoding ~= nil
                        or request_content_type == "multipart/byteranges"
   
-  if conf.log_bodies then
+  if log_bodies then
     ngx.log(ngx.ERR, "TEST1", "")
     if req_body_str then
       ngx.log(ngx.ERR, "TEST2", "")
@@ -248,7 +248,7 @@ function CustomHttpLogHandler:log(conf)
     req_body = ctx.galileo.req_body
     res_body = ctx.galileo.res_body
   end
-  local request = create_req(req_body,res_body)
+  local request = create_req(conf.log_bodies,req_body,res_body)
   local ok, err = ngx.timer.at(0, log, conf, serialize(request), self._name)
   if not ok then
     ngx.log(ngx.ERR, "["..self._name.."] failed to create timer: ", err)

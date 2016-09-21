@@ -233,7 +233,7 @@ function CustomHttpLogHandler:access(conf)
 
   if conf.log_bodies then
     read_body()
-    ngx.ctx.galileo = {req_body = get_body_data()}
+    ngx.ctx.customhttp = {req_body = get_body_data()}
   end
 end
 
@@ -244,9 +244,9 @@ function CustomHttpLogHandler:body_filter(conf)
   if conf.log_bodies then
     local chunk = ngx.arg[1]
     local ctx = ngx.ctx
-    local res_body = ctx.galileo and ctx.galileo.res_body or ""
+    local res_body = ctx.customhttp and ctx.customhttp.res_body or ""
     res_body = res_body .. (chunk or "")
-    ctx.galileo.res_body = res_body
+    ctx.customhttp.res_body = res_body
   end
 end
 
@@ -261,9 +261,9 @@ function CustomHttpLogHandler:log(conf)
   local ctx = ngx.ctx
   CustomHttpLogHandler.super.log(self)
   local req_body, res_body
-  if ctx.galileo then
-    req_body = ctx.galileo.req_body
-    res_body = ctx.galileo.res_body
+  if ctx.customhttp then
+    req_body = ctx.customhttp.req_body
+    res_body = ctx.customhttp.res_body
   end
   local request = create_req(conf.log_bodies,req_body,res_body)
   local ok, err = ngx.timer.at(0, log, conf, serialize(request), self._name)

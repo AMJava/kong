@@ -8,14 +8,7 @@ local CustomHttpLogHandler = BasePlugin:extend()
 CustomHttpLogHandler.PRIORITY = 1
 
 local HTTPS = "https"
-local resp_get_headers = ngx.resp.get_headers
-local req_start_time = ngx.req.start_time
-local req_get_method = ngx.req.get_method
 local req_get_headers = ngx.req.get_headers
-local req_get_uri_args = ngx.req.get_uri_args
-local req_raw_header = ngx.req.raw_header
-local encode_base64 = ngx.encode_base64
-local http_version = ngx.req.http_version
 
 -- Generates http payload .
 -- @param `method` http method to be used to send data

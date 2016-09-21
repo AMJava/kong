@@ -78,7 +78,7 @@ local function get_header(t, name, default)
   return v
 end
 
-local function create_req()
+local function create_req(req_body_str,resp_body_str)
   local http_version = "HTTP/"..http_version()
   
   local request_headers = req_get_headers()
@@ -92,18 +92,18 @@ local function create_req()
                        or request_content_type == "multipart/byteranges"
   
   if req_has_body then
-    if ngx.ctx.galileo.req_body then
-      req_body_size = #ngx.ctx.galileo.req_body
+    if req_body_str then
+      req_body_size = #req_body_str
       post_data = {
-        text = encode_base64(ngx.ctx.galileo.req_body),
+        text = encode_base64(req_body_str),
         encoding = "base64",
         mimeType = request_content_type
       }
    end
-      if ngx.ctx.galileo.resp_body then
-      resp_body_size = #ngx.ctx.galileo.resp_body
+      if resp_body_str then
+      resp_body_size = #resp_body_str
       response_content = {
-        text = encode_base64(#ngx.ctx.galileo.resp_body),
+        text = encode_base64(#resp_body_str),
         encoding = "base64",
         mimeType = resp_content_type
       }
@@ -239,7 +239,12 @@ end
 
 function CustomHttpLogHandler:log(conf)
   CustomHttpLogHandler.super.log(self)
-  local request = create_req()
+  local req_body, res_body
+  if ctx.galileo then
+    req_body = ctx.galileo.req_body
+    res_body = ctx.galileo.res_body
+  end
+  local request = create_req(req_body,res_body)
   local ok, err = ngx.timer.at(0, log, conf, serialize(request), self._name)
   if not ok then
     ngx.log(ngx.ERR, "["..self._name.."] failed to create timer: ", err)

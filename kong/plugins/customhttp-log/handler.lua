@@ -16,6 +16,9 @@ local req_get_uri_args = ngx.req.get_uri_args
 local req_raw_header = ngx.req.raw_header
 local encode_base64 = ngx.encode_base64
 local http_version = ngx.req.http_version
+
+local read_body = ngx.req.read_body
+local get_body_data = ngx.req.get_body_data
 local os_date = os.date
 local gsub = string.gsub
 

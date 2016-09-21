@@ -16,7 +16,6 @@ local req_get_uri_args = ngx.req.get_uri_args
 local req_raw_header = ngx.req.raw_header
 local encode_base64 = ngx.encode_base64
 local http_version = ngx.req.http_version
-local encode_base64 = ngx.encode_base64
 
 local read_body = ngx.req.read_body
 local get_body_data = ngx.req.get_body_data
@@ -131,7 +130,6 @@ end
   local send_t = ngx.ctx.KONG_PROXY_LATENCY or 0
   local wait_t = ngx.ctx.KONG_WAITING_TIME or 0
   local receive_t = ngx.ctx.KONG_RECEIVE_TIME or 0
-  local post_data, response_content
   local idx = 1                   
 
   entries[idx] = {

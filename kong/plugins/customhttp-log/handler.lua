@@ -81,6 +81,9 @@ end
 local function create_req(log_bodies,req_body_str,resp_body_str)
   local http_version = "HTTP/"..http_version()
   
+  local post_data, response_content
+  local req_body_size, resp_body_size = 0, 0
+  
   local request_headers = req_get_headers()
   local request_content_len = get_header(request_headers, "content-length", 0)
   local request_transfer_encoding = get_header(request_headers, "transfer-encoding")

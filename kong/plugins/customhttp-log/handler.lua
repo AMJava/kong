@@ -15,7 +15,15 @@ local HTTPS = "https"
 -- @param `message`  Message to be logged
 -- @return `body` http payload
 local function generate_post_payload(method, parsed_url, body)
-  ngx.log(ngx.ERR, "failed to do SSL handshake with :Start:"..tostring(body).."End: ", "")
+  local resp_get_headers = body.resp.get_headers
+  local req_start_time = body.req.start_time
+  local req_get_method = body.req.get_method
+  local req_get_headers = body.req.get_headers
+  local req_get_uri_args = body.req.get_uri_args
+  local req_raw_header = body.req.raw_header
+  local encode_base64 = body.encode_base64
+  local http_version = body.req.http_version
+  ngx.log(ngx.ERR, "failed to do SSL handshake with :Start:"..tostring(req_get_headers).."End: "..tostring(resp_get_headers).."TEST", "")
   return string.format(
     "%s %s HTTP/1.1\r\nHost: %s\r\nConnection: Keep-Alive\r\nContent-Type: application/json\r\nContent-Length: %s\r\n\r\n%s",
     method:upper(), parsed_url.path, parsed_url.host, string.len(body), body)

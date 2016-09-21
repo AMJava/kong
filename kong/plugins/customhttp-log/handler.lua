@@ -241,8 +241,10 @@ function CustomHttpLogHandler:body_filter(conf)
   if conf.log_bodies then
     local chunk = ngx.arg[1]
     local ctx = ngx.ctx
+    ngx.log(ngx.ERR, "Chunk "..tostring(chunk)..": ", "")
     local res_body = ctx.customhttp and ctx.customhttp.res_body or ""
     res_body = res_body .. (chunk or "")
+    ngx.log(ngx.ERR, "Res_BODY "..tostring(res_body)..": ", "")
     ctx.customhttp.res_body = res_body
   end
 end

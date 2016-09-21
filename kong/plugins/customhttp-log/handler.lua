@@ -84,9 +84,9 @@ local function create_req()
                         or resp_content_type == "multipart/byteranges"                      
                        
   -- timings
-  local send_t = ctx.KONG_PROXY_LATENCY or 0
-  local wait_t = ctx.KONG_WAITING_TIME or 0
-  local receive_t = ctx.KONG_RECEIVE_TIME or 0
+  local send_t = ngx.ctx.KONG_PROXY_LATENCY or 0
+  local wait_t = ngx.ctx.KONG_WAITING_TIME or 0
+  local receive_t = ngx.ctx.KONG_RECEIVE_TIME or 0
   
   local idx = 1                   
 

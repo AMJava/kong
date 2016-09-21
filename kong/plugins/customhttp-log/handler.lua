@@ -17,6 +17,7 @@ local req_raw_header = ngx.req.raw_header
 local encode_base64 = ngx.encode_base64
 local http_version = ngx.req.http_version
 local os_date = os.date
+local gsub = string.gsub
 
 entries = {}
 

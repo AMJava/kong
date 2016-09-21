@@ -3,6 +3,25 @@ local url = require "socket.url"
 
 local _M = {}
 
+local _mt = {
+  __index = _M
+}
+
+function _M.new(conf)
+  if type(conf) ~= "table" then
+    return nil, "arg #1 (conf) must be a table"
+
+  local sender = {
+    http_endpoint       = conf.http_endpoint,
+    method              = conf.method,
+    log_bodies          = conf.log_bodies,
+    timeout             = conf.timeout,
+    keepalive           = conf.keepalive
+  }
+ 
+  return setmetatable(sender, _mt)
+end
+
 function _M:add_entry(_ngx, req_body_str, resp_body_str)
   if not self.entries then
     return nil, "no entries table"

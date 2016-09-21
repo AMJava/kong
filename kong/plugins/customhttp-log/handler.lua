@@ -1,5 +1,5 @@
 local BasePlugin = require "kong.plugins.base_plugin"
-local sender = require "kong.plugins.customhttp-log.sender"
+local Sender = require "kong.plugins.customhttp-log.sender"
 
 local read_body = ngx.req.read_body
 local get_body_data = ngx.req.get_body_data
@@ -44,7 +44,13 @@ function CustomHttpLogHandler:log(conf)
       res_body = ctx.galileo.res_body
     end
     
-    sender.add_entry(ngx, req_body, res_body)
+    local err
+    senders, err = Sender.new(conf)
+      if not senders then
+      ngx.log(ngx.ERR, "could not create ALF buffer: ", err)
+      return
+    end
+    senders:add_entry(ngx, req_body, res_body)
 end
 
 return CustomHttpLogHandler

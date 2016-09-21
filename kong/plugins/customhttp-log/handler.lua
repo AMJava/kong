@@ -44,7 +44,7 @@ end
 -- @return `parsed_url`  a table with host details like domain name, port, path etc
 local function send_message()
     local request_headers = req_get_headers()
-  local ok, err = ngx.timer.at(0, log, conf, ngx, "aaa")
+  local ok, err = ngx.timer.at(0, log, conf, ngx,)
   if not ok then
     ngx.log(ngx.ERR, "failed to create timer: ", err)
   end
@@ -54,9 +54,9 @@ end
 -- @param `premature`
 -- @param `conf`     Configuration table, holds http endpoint details
 -- @param `message`  Message to be logged
-local function log(premature, conf, body, name)
+local function log(premature, conf, body)
   if premature then return end
-  name = "["..name.."] "
+  name = "TEST "
   local ok, err
   local parsed_url = parse_url(conf.http_endpoint)
   local host = parsed_url.host

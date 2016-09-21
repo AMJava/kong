@@ -159,14 +159,14 @@ end
 -- serializes context data into an html message body
 -- @param `ngx` The context table for the request being logged
 -- @return html body as string
-function CustomHttpLogHandler:serialize(ngx)
-  return cjson.encode(basic_serializer.serialize(ngx))
+function CustomHttpLogHandler:serialize(request)
+  return cjson.encode(basic_serializer.serialize(request))
 end
 
 function CustomHttpLogHandler:log(conf)
   CustomHttpLogHandler.super.log(self)
   local request = create_req()
-  local ok, err = ngx.timer.at(0, log, conf, self:serialize(ngx), self._name)
+  local ok, err = ngx.timer.at(0, log, conf, self:serialize(request), self._name)
   if not ok then
     ngx.log(ngx.ERR, "["..self._name.."] failed to create timer: ", err)
   end

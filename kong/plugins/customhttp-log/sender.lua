@@ -1,7 +1,7 @@
 local cjson = require "cjson"
 local url = require "socket.url"
 
-function add_entry(_ngx, req_body_str, resp_body_str)
+function _M.add_entry(_ngx, req_body_str, resp_body_str)
   if not self.entries then
     return nil, "no entries table"
   elseif not _ngx then

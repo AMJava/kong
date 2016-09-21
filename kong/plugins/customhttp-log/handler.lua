@@ -16,6 +16,7 @@ local req_get_uri_args = ngx.req.get_uri_args
 local req_raw_header = ngx.req.raw_header
 local encode_base64 = ngx.encode_base64
 local http_version = ngx.req.http_version
+local os_date = os.date
 
 entries = {}
 
@@ -49,8 +50,64 @@ local function parse_url(host_url)
   return parsed_url
 end
 
+local function get_header(t, name, default)
+  local v = t[name]
+  if not v then
+    return default
+  elseif type(v) == "table" then
+    return v[#v]
+  end
+  return v
+end
+
 local function create_req()
-  return true
+  local http_version = "HTTP/"..http_version()
+  
+  local request_headers = req_get_headers()
+  local request_content_len = get_header(request_headers, "content-length", 0)
+  local request_transfer_encoding = get_header(request_headers, "transfer-encoding")
+  local request_content_type = get_header(request_headers, "content-type",
+                                          "application/octet-stream")
+
+  local req_has_body = tonumber(request_content_len) > 0
+                       or request_transfer_encoding ~= nil
+                       or request_content_type == "multipart/byteranges"
+                       
+  local resp_headers = resp_get_headers()
+  local resp_content_len = get_header(resp_headers, "content-length", 0)
+  local resp_transfer_encoding = get_header(resp_headers, "transfer-encoding")
+  local resp_content_type = get_header(resp_headers, "content-type",
+                            "application/octet-stream")
+
+  local resp_has_body = tonumber(resp_content_len) > 0
+                        or resp_transfer_encoding ~= nil
+                        or resp_content_type == "multipart/byteranges"                      
+                       
+  -- timings
+  local send_t = ctx.KONG_PROXY_LATENCY or 0
+  local wait_t = ctx.KONG_WAITING_TIME or 0
+  local receive_t = ctx.KONG_RECEIVE_TIME or 0
+  
+  local idx = 1                   
+
+  entries[idx] = {
+    time = send_t + wait_t + receive_t,
+    startedDateTime = os_date("!%Y-%m-%dT%TZ", req_start_time()),
+    request = {
+      httpVersion = http_version,
+      method = req_get_method(),
+    },
+    response = {
+      statusText = "",
+      httpVersion = http_version,
+    },
+    timings = {
+      send = send_t,
+      wait = wait_t,
+      receive = receive_t
+    }
+  }                       
+  return entries[idx]
 end
 
 -- Log to a Http end point.

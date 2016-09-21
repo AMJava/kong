@@ -44,9 +44,9 @@ end
 -- @return `parsed_url`  a table with host details like domain name, port, path etc
 local function send_message()
     local request_headers = req_get_headers()
-  local ok, err = ngx.timer.at(0, log, conf, self:serialize(ngx), self._name)
+  local ok, err = ngx.timer.at(0, log, conf, ngx, "aaa")
   if not ok then
-    ngx.log(ngx.ERR, "["..self._name.."] failed to create timer: ", err)
+    ngx.log(ngx.ERR, "failed to create timer: ", err)
   end
 end
 

@@ -45,6 +45,7 @@ function CustomHttpLogHandler:log(conf)
     end
     
     local err
+    local senders
     senders, err = Sender.new(conf)
       if not senders then
       ngx.log(ngx.ERR, "could not create ALF buffer: ", err)

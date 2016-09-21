@@ -146,7 +146,7 @@ end
       headers = hash_to_array(resp_headers),
       headersSize = 0,
       bodyCaptured = resp_has_body,
-      bodySize = resp_body_size
+      bodySize = resp_body_size,
       content = response_content
     },
     timings = {

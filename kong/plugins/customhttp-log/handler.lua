@@ -3,10 +3,13 @@ local BasePlugin = require "kong.plugins.base_plugin"
 local cjson = require "cjson.safe"
 local url = require "socket.url"
 
+--Extend Base Plugin
 local CustomHttpLogHandler = BasePlugin:extend()
 
+--Set Priority
 CustomHttpLogHandler.PRIORITY = 1
 
+--set global variables
 local HTTPS = "https"
 local resp_get_headers = ngx.resp.get_headers
 local req_start_time = ngx.req.start_time
@@ -22,6 +25,7 @@ local get_body_data = ngx.req.get_body_data
 local os_date = os.date
 local gsub = string.gsub
 
+--request structure
 entries = {}
 
 -- Generates http payload .
@@ -54,6 +58,7 @@ local function parse_url(host_url)
   return parsed_url
 end
 
+--Hash to array
 local function hash_to_array(t)
   local arr = setmetatable({}, cjson.empty_array_mt)
   for k, v in pairs(t) do
@@ -68,6 +73,7 @@ local function hash_to_array(t)
   return arr
 end
 
+--Get Header fields
 local function get_header(t, name, default)
   local v = t[name]
   if not v then
@@ -78,12 +84,14 @@ local function get_header(t, name, default)
   return v
 end
 
+--Create request method
 local function create_req(log_bodies,req_body_str,resp_body_str)
   local http_version = "HTTP/"..http_version()
   
   local post_data, response_content
   local req_body_size, resp_body_size = 0, 0
   
+  --Get Request header info
   local request_headers = req_get_headers()
   local request_content_len = get_header(request_headers, "content-length", 0)
   local request_transfer_encoding = get_header(request_headers, "transfer-encoding")
@@ -94,7 +102,19 @@ local function create_req(log_bodies,req_body_str,resp_body_str)
                        or request_transfer_encoding ~= nil
                        or request_content_type == "multipart/byteranges"
   
-  if log_bodies then
+  --Get Response header info
+  local resp_headers = resp_get_headers()
+  local resp_content_len = get_header(resp_headers, "content-length", 0)
+  local resp_transfer_encoding = get_header(resp_headers, "transfer-encoding")
+  local resp_content_type = get_header(resp_headers, "content-type",
+                            "application/octet-stream")
+
+  local resp_has_body = tonumber(resp_content_len) > 0
+                        or resp_transfer_encoding ~= nil
+                        or resp_content_type == "multipart/byteranges"     
+
+--Decide to log body or not
+ if log_bodies then
     ngx.log(ngx.ERR, "TEST1", "")
     if req_body_str then
       ngx.log(ngx.ERR, "TEST2", "")
@@ -114,17 +134,7 @@ local function create_req(log_bodies,req_body_str,resp_body_str)
         mimeType = resp_content_type
       }
     end
-end
-
-  local resp_headers = resp_get_headers()
-  local resp_content_len = get_header(resp_headers, "content-length", 0)
-  local resp_transfer_encoding = get_header(resp_headers, "transfer-encoding")
-  local resp_content_type = get_header(resp_headers, "content-type",
-                            "application/octet-stream")
-
-  local resp_has_body = tonumber(resp_content_len) > 0
-                        or resp_transfer_encoding ~= nil
-                        or resp_content_type == "multipart/byteranges"                      
+end                  
                        
   -- timings
   local send_t = ngx.ctx.KONG_PROXY_LATENCY or 0
@@ -132,6 +142,7 @@ end
   local receive_t = ngx.ctx.KONG_RECEIVE_TIME or 0
   local idx = 1                   
 
+  -- main request
   entries[idx] = {
     time = send_t + wait_t + receive_t,
     startedDateTime = os_date("!%Y-%m-%dT%TZ", req_start_time()),
@@ -212,6 +223,7 @@ function CustomHttpLogHandler:new(name)
   CustomHttpLogHandler.super.new(self, name or "http-log")
 end
 
+--Needed to get request body
 function CustomHttpLogHandler:access(conf)
   CustomHttpLogHandler.super.access(self)
 
@@ -225,6 +237,7 @@ function CustomHttpLogHandler:access(conf)
   end
 end
 
+--Needed to get response body
 function CustomHttpLogHandler:body_filter(conf)
   CustomHttpLogHandler.super.body_filter(self)
 
@@ -237,11 +250,13 @@ function CustomHttpLogHandler:body_filter(conf)
   end
 end
 
+--Convert request to json object
 function serialize(request)
   local json = cjson.encode(request)
   return gsub(json, "\\/", "/")
 end
 
+--Executed when the last response byte has been sent to the client.
 function CustomHttpLogHandler:log(conf)
   local ctx = ngx.ctx
   CustomHttpLogHandler.super.log(self)

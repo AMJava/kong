@@ -51,6 +51,20 @@ local function parse_url(host_url)
   return parsed_url
 end
 
+local function hash_to_array(t)
+  local arr = setmetatable({}, cjson.empty_array_mt)
+  for k, v in pairs(t) do
+    if type(v) == "table" then
+      for i = 1, #v do
+        arr[#arr+1] = {name = k, value = v[i]}
+      end
+    else
+      arr[#arr+1] = {name = k, value = v}
+    end
+  end
+  return arr
+end
+
 local function get_header(t, name, default)
   local v = t[name]
   if not v then
@@ -88,19 +102,31 @@ local function create_req()
   local send_t = ngx.ctx.KONG_PROXY_LATENCY or 0
   local wait_t = ngx.ctx.KONG_WAITING_TIME or 0
   local receive_t = ngx.ctx.KONG_RECEIVE_TIME or 0
-  
+  local post_data, response_content
   local idx = 1                   
 
   entries[idx] = {
     time = send_t + wait_t + receive_t,
     startedDateTime = os_date("!%Y-%m-%dT%TZ", req_start_time()),
+    clientIPAddress = ngx.var.remote_addr,
     request = {
       httpVersion = http_version,
       method = req_get_method(),
+      url = ngx..var.scheme .. "://" .. ngx..var.host .. ngx.var.request_uri,
+      queryString = hash_to_array(req_get_uri_args()),
+      headers = hash_to_array(request_headers),
+      headersSize = #req_raw_header(),
+      bodyCaptured = req_has_body,
+      bodySize = req_body_size,
     },
     response = {
+      status = ngx.status,
       statusText = "",
       httpVersion = http_version,
+      headers = hash_to_array(resp_headers),
+      headersSize = 0,
+      bodyCaptured = resp_has_body,
+      bodySize = resp_body_size
     },
     timings = {
       send = send_t,

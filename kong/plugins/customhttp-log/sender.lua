@@ -1,6 +1,7 @@
 local cjson = require "cjson"
 local url = require "socket.url"
 
+local setmetatable = setmetatable
 local _M = {}
 
 local _mt = {

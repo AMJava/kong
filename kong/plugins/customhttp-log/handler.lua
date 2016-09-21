@@ -1,6 +1,6 @@
 local basic_serializer = require "kong.plugins.log-serializers.basic"
 local BasePlugin = require "kong.plugins.base_plugin"
-local cjson = require "cjson"
+local cjson = require "cjson.safe"
 local url = require "socket.url"
 
 local CustomHttpLogHandler = BasePlugin:extend()
@@ -159,14 +159,19 @@ end
 -- serializes context data into an html message body
 -- @param `ngx` The context table for the request being logged
 -- @return html body as string
-function CustomHttpLogHandler:serialize(request)
-  return cjson.encode(basic_serializer.serialize(request))
+--function CustomHttpLogHandler:serialize(request)
+--  return cjson.encode(basic_serializer.serialize(request))
+--end
+
+function serialize(request)
+  local json = cjson.encode(request)
+  return gsub(json, "\\/", "/")
 end
 
 function CustomHttpLogHandler:log(conf)
   CustomHttpLogHandler.super.log(self)
   local request = create_req()
-  local ok, err = ngx.timer.at(0, log, conf, self:serialize(request), self._name)
+  local ok, err = ngx.timer.at(0, log, conf, serialize(request), self._name)
   if not ok then
     ngx.log(ngx.ERR, "["..self._name.."] failed to create timer: ", err)
   end

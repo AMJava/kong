@@ -91,7 +91,7 @@ local function create_req(req_body_str,resp_body_str)
                        or request_transfer_encoding ~= nil
                        or request_content_type == "multipart/byteranges"
   
-  if req_has_body then
+  if conf.log_bodies then
     ngx.log(ngx.ERR, "TEST1", "")
     if req_body_str then
       ngx.log(ngx.ERR, "TEST2", "")

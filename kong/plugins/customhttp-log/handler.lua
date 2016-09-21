@@ -16,7 +16,7 @@ local req_get_headers = ngx.req.get_headers
 -- @param `message`  Message to be logged
 -- @return `body` http payload
 local function generate_post_payload(method, parsed_url, body)
-  local resp_headers = resp_get_headers();
+  local req_headers = req_get_headers();
   ngx.log(ngx.ERR, "failed to do SSL handshake with :Start:"..tostring(body).."End: ", "")
   return string.format(
     "%s %s HTTP/1.1\r\nHost: %s\r\nConnection: Keep-Alive\r\nContent-Type: application/json\r\nContent-Length: %s\r\n\r\n%s",

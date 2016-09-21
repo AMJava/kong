@@ -13,4 +13,6 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   elseif resp_body_str ~= nil and type(resp_body_str) ~= "string" then
     return nil, "arg #3 (resp_body_str) must be a string"
   end
+  
+  return true
 end

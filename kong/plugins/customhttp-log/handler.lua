@@ -108,6 +108,7 @@ local function create_req(max_size_mb,log_bodies,req_body_str,resp_body_str)
   local resp_headers = resp_get_headers()
   local resp_content_len = get_header(resp_headers, "content-length", 0)
   local resp_transfer_encoding = get_header(resp_headers, "transfer-encoding")
+  local resp_content_encoding = get_header(resp_headers, "content-encoding")
   local resp_content_type = get_header(resp_headers, "content-type",
                             "application/octet-stream")
 
@@ -124,7 +125,7 @@ local function create_req(max_size_mb,log_bodies,req_body_str,resp_body_str)
    end
     if resp_body_str then
       resp_body_size = #resp_body_str
-      response_content = encode_base64(resp_body_str)
+      response_content = resp_body_str
     end
 end                  
                        
@@ -160,7 +161,7 @@ end
 	  metadata = {
       http_statuc_code = ""..ngx.status,
       http_content_type = resp_content_type,
-      http_character_enc = "base64"
+      http_character_enc = resp_content_encoding
 	  },
     body = response_content,
     headers = resp_headers

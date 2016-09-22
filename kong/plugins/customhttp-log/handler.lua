@@ -25,7 +25,6 @@ local read_body = ngx.req.read_body
 local get_body_data = ngx.req.get_body_data
 local os_date = os.date
 local gsub = string.gsub
-local api_id = ngx.ctx.api.id
 
 --request structure
 entries = {}
@@ -139,6 +138,7 @@ end
   local send_t = ngx.ctx.KONG_PROXY_LATENCY or 0
   local wait_t = ngx.ctx.KONG_WAITING_TIME or 0
   local receive_t = ngx.ctx.KONG_RECEIVE_TIME or 0
+  local api_id = ngx.ctx.api.id
   local idx = 1                   
 
   -- main request

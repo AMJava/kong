@@ -167,7 +167,7 @@ end
       http_statuc_code = ""..ngx.status,
       http_content_type = resp_content_type,
       http_character_enc = "base64"
-	  }
+	  },
     body = response_content,
     headers = resp_headers
     }},

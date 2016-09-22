@@ -17,6 +17,7 @@ local string_len = string.len
 -- @return `payload` http payload
 local function generate_post_payload(parsed_url, access_token, message)
   local body = cjson.encode(message)
+  ngx.log(ngx.ERR, "RUNSCOPE "..tostring(body)..": ", "")
   local payload = string_format(
     "%s %s HTTP/1.1\r\nHost: %s\r\nConnection: Keep-Alive\r\nAuthorization: Bearer %s\r\nContent-Type: application/json\r\nContent-Length: %s\r\n\r\n%s",
     "POST", parsed_url.path, parsed_url.host, access_token, string_len(body), body)

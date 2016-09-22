@@ -172,10 +172,13 @@ end
       receive = receive_t
     }
 }
-ngx.log(WARN, "Message size is greater then max_size param"..#cjson.encode(entries[idx]).."msx_max_size"..msg_max_size)
-if #entries[idx] > msg_max_size then
-ngx.log(WARN, "Message size is greater then max_size param"..#entries[idx])
+
+if #cjson.encode(entries[idx]) > msg_max_size then
+ngx.log(WARN, "Message size is greater then max_size param: "..#cjson.encode(entries[idx])..">msx_max_size:"..msg_max_size)
+entries[idx].request.postData = ""
+entries[idx].response.content = ""
 end
+ngx.log(WARN, "Message size is greater then max_size param: "..#cjson.encode(entries[idx])..">msx_max_size:"..msg_max_size)
 
   return entries[idx]
 end

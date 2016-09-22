@@ -13,7 +13,7 @@ CustomHttpLogHandler.PRIORITY = 1
 local HTTPS = "https"
 local resp_get_headers = ngx.resp.get_headers
 local req_start_time = ngx.req.start_time
-local req_get_method = ngx.req.get_method
+local req_get_method = ngx.now
 local req_get_headers = ngx.req.get_headers
 local WARN = ngx.WARN
 

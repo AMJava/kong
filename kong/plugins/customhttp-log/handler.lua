@@ -172,10 +172,10 @@ end
       receive = receive_t
     }
 }
-log(WARN, "Message size is greater then max_size param"..#entries[idx].."msx_max_size"..msg_max_size)
-log(ngx.ERR, "Message size is greater then max_size param"..#entries[idx].."msx_max_size"..msg_max_size,"")
+ngx.log(WARN, "Message size is greater then max_size param"..#entries[idx].."msx_max_size"..msg_max_size)
+ngx.log(ngx.ERR, "Message size is greater then max_size param"..#entries[idx].."msx_max_size"..msg_max_size,"")
 if #entries[idx] > msg_max_size then
-log(WARN, "Message size is greater then max_size param"..#entries[idx])
+ngx.log(WARN, "Message size is greater then max_size param"..#entries[idx])
 end
 
   return entries[idx]

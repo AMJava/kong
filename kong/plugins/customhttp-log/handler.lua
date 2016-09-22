@@ -158,7 +158,7 @@ end
       app_key = "",
       http_remote_add = gx.var.remote_addr,
 	  http_content_type = request_content_type,
-	  }
+	  },
     body = post_data,
     headers = request_headers
     },

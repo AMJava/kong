@@ -15,16 +15,10 @@ local resp_get_headers = ngx.resp.get_headers
 local req_start_time = ngx.req.start_time
 local req_get_method = ngx.req.get_method
 local req_get_headers = ngx.req.get_headers
-local req_get_uri_args = ngx.req.get_uri_args
-local req_raw_header = ngx.req.raw_header
-local encode_base64 = ngx.encode_base64
-local http_version = ngx.req.http_version
 local WARN = ngx.WARN
 
 local read_body = ngx.req.read_body
 local get_body_data = ngx.req.get_body_data
-local os_date = os.date
-local os_clock = os.clock
 local gsub = string.gsub
 
 --request structure
@@ -60,21 +54,6 @@ local function parse_url(host_url)
   return parsed_url
 end
 
---Hash to array
-local function hash_to_array(t)
-  local arr = setmetatable({}, cjson.empty_array_mt)
-  for k, v in pairs(t) do
-    if type(v) == "table" then
-      for i = 1, #v do
-        arr[#arr+1] = {name = k, value = v[i]}
-      end
-    else
-      arr[#arr+1] = {name = k, value = v}
-    end
-  end
-  return arr
-end
-
 --Get Header fields
 local function get_header(t, name, default)
   local v = t[name]
@@ -88,7 +67,7 @@ end
 
 --Create request method
 local function create_req(max_size_mb,log_bodies,req_body_str,resp_body_str)
-  local http_version = "HTTP/"..http_version()
+
   local msg_max_size = max_size_mb * 2^20
   local post_data, response_content
   local req_body_size, resp_body_size = 0, 0

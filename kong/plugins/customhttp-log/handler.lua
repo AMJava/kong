@@ -144,7 +144,7 @@ end
   -- main request
   entries[idx] = {
     source = "bebessmana",
-    timestamp = req_start_time(),
+    timestamp = os_date(),
     id = api_id,
     request = {
       httpVersion = http_version,

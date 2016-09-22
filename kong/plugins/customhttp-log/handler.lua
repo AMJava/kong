@@ -122,9 +122,9 @@ local function create_req(max_size_mb,log_bodies,req_body_str,resp_body_str)
       post_data = req_body_str
 
    end
-      if resp_body_str then
+    if resp_body_str then
       resp_body_size = #resp_body_str
-      response_content = encode_base64(resp_body_str),
+      response_content = encode_base64(resp_body_str)
     end
 end                  
                        

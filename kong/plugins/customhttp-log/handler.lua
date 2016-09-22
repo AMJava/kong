@@ -140,6 +140,7 @@ end
   local wait_t = ngx.ctx.KONG_WAITING_TIME or 0
   local receive_t = ngx.ctx.KONG_RECEIVE_TIME or 0
   local api_id = ngx.ctx.api.id
+  local request_path = ngx.ctx.api.request_path
   local idx = 1                   
 
   -- main request
@@ -154,7 +155,7 @@ end
     request = {
 	  metadata = {
       http_method = req_get_method(),
-      http_path = ngx.var.path,
+      http_path = request_path,
       app_key = "",
       http_remote_add = ngx.var.remote_addr,
 	  http_content_type = request_content_type,

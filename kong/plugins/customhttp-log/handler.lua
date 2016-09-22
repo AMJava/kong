@@ -145,7 +145,7 @@ end
   entries[idx] = {
     source = "bebessmana",
     timestamp = req_start_time(),
-    id = api_id(),
+    id = api_id,
     request = {
       httpVersion = http_version,
       method = req_get_method(),

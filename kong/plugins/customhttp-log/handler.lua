@@ -18,6 +18,7 @@ local req_get_headers = ngx.req.get_headers
 local req_get_uri_args = ngx.req.get_uri_args
 local req_raw_header = ngx.req.raw_header
 local encode_base64 = ngx.encode_base64
+local decode_base64 = ngx.decode_base64
 local http_version = ngx.req.http_version
 
 local read_body = ngx.req.read_body

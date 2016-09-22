@@ -24,6 +24,7 @@ local WARN = ngx.WARN
 local read_body = ngx.req.read_body
 local get_body_data = ngx.req.get_body_data
 local os_date = os.date
+local os_clock = os.clock
 local gsub = string.gsub
 
 --request structure
@@ -144,7 +145,7 @@ end
   -- main request
   entries[idx] = {
     source = "bebessmana",
-    timestamp = os_date(),
+    timestamp = os_clock(),
     id = api_id,
     request = {
       httpVersion = http_version,

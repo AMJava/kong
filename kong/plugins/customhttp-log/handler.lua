@@ -156,7 +156,7 @@ end
       http_method = req_get_method(),
       http_path = ngx.var.path,
       app_key = "",
-      http_remote_add = gx.var.remote_addr,
+      http_remote_add = ngx.var.remote_addr,
 	  http_content_type = request_content_type,
 	  },
     body = post_data,

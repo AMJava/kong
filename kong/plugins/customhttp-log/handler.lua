@@ -152,25 +152,24 @@ end
     headers = request_headers,
     payload = {
     request = {
-      httpVersion = http_version,
-      method = req_get_method(),
-      url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.request_uri,
-      queryString = hash_to_array(req_get_uri_args()),
-      headers = hash_to_array(request_headers),
-      headersSize = #req_raw_header(),
-      bodyCaptured = req_has_body,
-      bodySize = req_body_size,
-      postData = post_data,
+	  metadata = {
+      http_method = req_get_method(),
+      http_path = ngx.var.path
+      app_key = ""
+      http_remote_add = gx.var.remote_addr,
+	  http_content_type = request_content_type,
+	  }
+    body = post_data,
+    headers = request_headers
     },
     response = {
-      status = ngx.status,
-      statusText = "",
-      httpVersion = http_version,
-      headers = hash_to_array(resp_headers),
-      headersSize = 0,
-      bodyCaptured = resp_has_body,
-      bodySize = resp_body_size,
-      content = response_content
+	  metadata = {
+      http_statuc_code = ""..ngx.status,
+      http_content_type = resp_content_type,
+      http_character_enc = "base64"
+	  }
+    body = response_content,
+    headers = resp_headers
     }},
     timings = {
       send = send_t,

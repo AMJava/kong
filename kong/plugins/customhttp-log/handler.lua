@@ -118,7 +118,7 @@ end
   -- main request
   entries[idx] = {
     source = "debessmana",
-    timestamp = req_start_time(),
+    timestamp = string.gsub(req_start_time(), "%D", ""),
     id = api_id,
     name = "KONG_API",
     headers = request_headers,

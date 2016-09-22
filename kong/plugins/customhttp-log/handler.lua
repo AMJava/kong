@@ -25,6 +25,7 @@ local read_body = ngx.req.read_body
 local get_body_data = ngx.req.get_body_data
 local os_date = os.date
 local gsub = string.gsub
+local api_id = ctx.api.id
 
 --request structure
 entries = {}
@@ -142,9 +143,9 @@ end
 
   -- main request
   entries[idx] = {
-    time = send_t + wait_t + receive_t,
-    startedDateTime = os_date("!%Y-%m-%dT%TZ", req_start_time()),
-    clientIPAddress = ngx.var.remote_addr,
+    source = "bebessmana",
+    timestamp = req_start_time()
+    id = api_id()
     request = {
       httpVersion = http_version,
       method = req_get_method(),

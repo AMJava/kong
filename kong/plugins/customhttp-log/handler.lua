@@ -171,10 +171,10 @@ end
     body = response_content,
     headers = resp_headers
     }},
-    timings = {
-      send = send_t,
-      wait = wait_t,
-      receive = receive_t
+    metrics = {
+      request_size = req_body_size,
+      response_size = resp_body_size,
+      execution_time = send_t + wait_t + receive_t
     }
 }
 

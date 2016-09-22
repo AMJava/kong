@@ -18,7 +18,6 @@ local req_get_headers = ngx.req.get_headers
 local req_get_uri_args = ngx.req.get_uri_args
 local req_raw_header = ngx.req.raw_header
 local encode_base64 = ngx.encode_base64
-local decode_base64 = ngx.decode_base64
 local http_version = ngx.req.http_version
 
 local read_body = ngx.req.read_body
@@ -120,7 +119,6 @@ local function create_req(log_bodies,req_body_str,resp_body_str)
       req_body_size = #req_body_str
       post_data = {
         text = encode_base64(req_body_str),
-        test = decode_base64(text),
         encoding = "base64",
         mimeType = request_content_type
       }
@@ -129,7 +127,6 @@ local function create_req(log_bodies,req_body_str,resp_body_str)
       resp_body_size = #resp_body_str
       response_content = {
         text = encode_base64(resp_body_str),
-        test = decode_base64(text),
         encoding = "base64",
         mimeType = resp_content_type
       }

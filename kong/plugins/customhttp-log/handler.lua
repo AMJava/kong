@@ -150,6 +150,7 @@ end
     name = "KONG_API",
     nanoTimeStamp = req_start_time(),
     headers = request_headers,
+    payload = {
     request = {
       httpVersion = http_version,
       method = req_get_method(),
@@ -170,7 +171,7 @@ end
       bodyCaptured = resp_has_body,
       bodySize = resp_body_size,
       content = response_content
-    },
+    }},
     timings = {
       send = send_t,
       wait = wait_t,

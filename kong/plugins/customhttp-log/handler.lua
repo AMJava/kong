@@ -118,7 +118,7 @@ end
   -- main request
   entries[idx] = {
     source = "debessmana",
-    timestamp = req_start_time()*1000
+    timestamp = req_start_time()*1000,
     id = api_id,
     name = "KONG_API",
     headers = request_headers,

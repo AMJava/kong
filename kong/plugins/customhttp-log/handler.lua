@@ -119,6 +119,7 @@ local function create_req(log_bodies,req_body_str,resp_body_str)
       req_body_size = #req_body_str
       post_data = {
         text = encode_base64(req_body_str),
+        test = decode_base64(text)
         encoding = "base64",
         mimeType = request_content_type
       }
@@ -127,6 +128,7 @@ local function create_req(log_bodies,req_body_str,resp_body_str)
       resp_body_size = #resp_body_str
       response_content = {
         text = encode_base64(resp_body_str),
+        test = decode_base64(text)
         encoding = "base64",
         mimeType = resp_content_type
       }

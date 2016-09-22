@@ -178,7 +178,6 @@ ngx.log(WARN, "Message size is greater then max_size param: "..#cjson.encode(ent
 entries[idx].request.postData = ""
 entries[idx].response.content = ""
 end
-ngx.log(WARN, "Message size is greater then max_size param: "..#cjson.encode(entries[idx])..">msx_max_size:"..msg_max_size)
 
   return entries[idx]
 end

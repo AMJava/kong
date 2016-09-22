@@ -108,7 +108,6 @@ local function create_req(max_size_mb,log_bodies,req_body_str,resp_body_str)
   local resp_headers = resp_get_headers()
   local resp_content_len = get_header(resp_headers, "content-length", 0)
   local resp_transfer_encoding = get_header(resp_headers, "transfer-encoding")
-  local resp_content_encoding = get_header(resp_headers, "content-encoding")
   local resp_content_type = get_header(resp_headers, "content-type",
                             "application/octet-stream")
 
@@ -161,7 +160,7 @@ end
 	  metadata = {
       http_statuc_code = ""..ngx.status,
       http_content_type = resp_content_type,
-      http_character_enc = resp_content_encoding
+      http_character_enc = resp_transfer_encoding
 	  },
     body = response_content,
     headers = resp_headers

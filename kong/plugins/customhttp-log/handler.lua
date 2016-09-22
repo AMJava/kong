@@ -19,6 +19,7 @@ local req_get_uri_args = ngx.req.get_uri_args
 local req_raw_header = ngx.req.raw_header
 local encode_base64 = ngx.encode_base64
 local http_version = ngx.req.http_version
+local WARN = ngx.WARN
 
 local read_body = ngx.req.read_body
 local get_body_data = ngx.req.get_body_data
@@ -85,9 +86,9 @@ local function get_header(t, name, default)
 end
 
 --Create request method
-local function create_req(log_bodies,req_body_str,resp_body_str)
+local function create_req(max_size_mb,log_bodies,req_body_str,resp_body_str)
   local http_version = "HTTP/"..http_version()
-  
+  local msg_max_size = max_size_mb * 2^20
   local post_data, response_content
   local req_body_size, resp_body_size = 0, 0
   
@@ -170,7 +171,11 @@ end
       wait = wait_t,
       receive = receive_t
     }
-  }                       
+}
+if #entries[idx] > msg_max_size then
+log(WARN, "Message size is greater then max_size param"..#entries[idx])
+end
+
   return entries[idx]
 end
 
@@ -262,7 +267,7 @@ function CustomHttpLogHandler:log(conf)
     req_body = ctx.customhttp.req_body
     res_body = ctx.customhttp.res_body
   end
-  local request = create_req(conf.log_bodies,req_body,res_body)
+  local request = create_req(conf.max_size_mb,conf.log_bodies,req_body,res_body)
   local ok, err = ngx.timer.at(0, log, conf, serialize(request), self._name)
   if not ok then
     ngx.log(ngx.ERR, "["..self._name.."] failed to create timer: ", err)

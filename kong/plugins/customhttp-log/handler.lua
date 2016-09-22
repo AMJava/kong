@@ -149,7 +149,6 @@ end
 	  metadata = {
       http_method = req_get_method(),
       http_path = request_path,
-      app_key = "",
       http_remote_add = ngx.var.remote_addr,
 	  http_content_type = request_content_type,
 	  },
@@ -166,7 +165,6 @@ end
     headers = resp_headers
     }},
     metrics = {
-      count = "1.0",
       request_size = req_body_size,
       response_size = resp_body_size,
       execution_time = send_t + wait_t + receive_t

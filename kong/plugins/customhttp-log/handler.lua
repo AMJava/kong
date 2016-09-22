@@ -147,6 +147,9 @@ end
     source = "bebessmana",
     timestamp = req_start_time(),
     id = api_id,
+    name = "KONG_API",
+    nanoTimeStamp = req_start_time(),
+    headers = request_headers,
     request = {
       httpVersion = http_version,
       method = req_get_method(),

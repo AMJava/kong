@@ -25,7 +25,7 @@ local read_body = ngx.req.read_body
 local get_body_data = ngx.req.get_body_data
 local os_date = os.date
 local gsub = string.gsub
-local api_id = ctx.api.id
+local api_id = ngx.ctx.api.id
 
 --request structure
 entries = {}

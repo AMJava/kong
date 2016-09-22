@@ -117,7 +117,7 @@ end
 
   -- main request
   entries[idx] = {
-    source = "bebessmana",
+    source = "debessmana",
     timestamp = req_start_time(),
     id = api_id,
     name = "KONG_API",

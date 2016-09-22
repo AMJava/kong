@@ -166,7 +166,7 @@ end
     headers = resp_headers
     }},
     metrics = {
-    	count = "1.0"
+      count = "1.0",
       request_size = req_body_size,
       response_size = resp_body_size,
       execution_time = send_t + wait_t + receive_t

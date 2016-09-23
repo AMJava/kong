@@ -202,10 +202,6 @@ function _M.new(conf)
     return nil, "arg #1 (conf) must be a table"
   elseif type(conf.server_addr) ~= "string" then
     return nil, "server_addr must be a string"
-  elseif type(conf.service_token) ~= "string" then
-    return nil, "service_token must be a string"
-  elseif conf.environment ~= nil and type(conf.environment) ~= "string" then
-    return nil, "environment must be a string"
   elseif conf.log_bodies ~= nil and type (conf.log_bodies) ~= "boolean" then
     return nil, "log_bodies must be a boolean"
   elseif conf.retry_count ~= nil and type(conf.retry_count) ~= "number" then
@@ -223,8 +219,6 @@ function _M.new(conf)
   end
 
   local buffer = {
-    service_token       = conf.service_token,
-    environment         = conf.environment,
     host                = conf.host,
     port                = conf.port,
     https               = conf.https,
@@ -265,7 +259,7 @@ function _M:add_entry(...)
 end
 
 function _M:flush()
-  local alf_json, err = self.cur_alf:serialize(self.service_token, self.environment)
+  local alf_json, err = self.cur_alf:serialize()
 
   self.cur_alf:reset()
 

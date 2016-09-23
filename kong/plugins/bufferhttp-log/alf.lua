@@ -79,11 +79,13 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   local var = _ngx.var
   local ctx = _ngx.ctx
   local request_headers = req_get_headers()
+  local request_content_len = get_header(request_headers, "content-length", 0)
   local request_transfer_encoding = get_header(request_headers, "transfer-encoding")
   local request_content_type = get_header(request_headers, "content-type",
                                           "application/octet-stream")
 
   local resp_headers = resp_get_headers()
+  local resp_content_len = get_header(resp_headers, "content-length", 0)
   local resp_transfer_encoding = get_header(resp_headers, "transfer-encoding")
   local resp_content_type = get_header(resp_headers, "content-type",
                             "application/octet-stream")
@@ -93,7 +95,8 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   -- stick to what the request really contains, since it was
   -- already read anyways.
   local post_data, response_content
-  local req_body_size, resp_body_size = 0, 0
+  local req_body_size = tonumber(request_content_len)
+  local resp_body_size = tonumber(resp_content_len)
 
   if self.log_bodies then
     if req_body_str then

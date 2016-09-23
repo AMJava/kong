@@ -123,7 +123,7 @@ end
 
 _send = function(premature, self, to_send)
   if premature then return end
-
+  log(ERR, "IN SEND", "")
   -- retry trigger, in case the collector
   -- is unresponseive
   local retry
@@ -161,9 +161,9 @@ _send = function(premature, self, to_send)
       local body = res:read_body()
       -- logging and error reports
       if res.status == 200 then
-        log(ERR, "Host collector saved the ALF (200 OK): ", body)
+        log(DEBUG, "Host collector saved the ALF (200 OK): ", body)
       elseif res.status == 207 then
-        log(ERR, "Host collector partially saved the ALF "
+        log(DEBUG, "Host collector partially saved the ALF "
                  .."(207 Multi-Status): ", body)
       elseif res.status >= 400 and res.status < 500 then
         log(WARN, "Host collector refused this ALF (", res.status, "): ", body)

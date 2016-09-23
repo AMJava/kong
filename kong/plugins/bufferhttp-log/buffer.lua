@@ -130,7 +130,7 @@ _send = function(premature, self, to_send)
   local client = http.new()
   client:set_timeout(self.connection_timeout)
   
-  local parsed_url = parse_url(conf.endpoint)
+  local parsed_url = parse_url(self.endpoint)
   
   local ok, err = client:connect(parsed_url.host, parsed_url.port)
   if not ok then

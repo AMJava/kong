@@ -228,6 +228,12 @@ function _M.new(conf)
     return nil, "retry_count must be a number"
   elseif conf.connection_timeout ~= nil and type(conf.connection_timeout) ~= "number" then
     return nil, "connection_timeout must be a number"
+  elseif conf.queue_size_mb ~= nil and type(conf.queue_size_mb) ~= "number" then
+    return nil, "queue_size_mb must be a number"
+  elseif conf.max_msg_size_mb ~= nil and type(conf.max_msg_size_mb) ~= "number" then
+    return nil, "max_msg_size_mb must be a number"
+  elseif conf.max_sending_queue_size_mb ~= nil and type(conf.max_sending_queue_size_mb) ~= "number" then
+    return nil, "max_sending_queue_size_mb must be a number"
   elseif conf.flush_timeout ~= nil and type(conf.flush_timeout) ~= "number" then
     return nil, "flush_timeout must be a number"
   elseif conf.queue_size ~= nil and type(conf.queue_size) ~= "number" then

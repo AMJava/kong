@@ -246,7 +246,9 @@ function _M.new(conf)
     connection_timeout  = conf.connection_timeout and conf.connection_timeout * 1000 or 30000, -- ms
     flush_timeout       = conf.flush_timeout and conf.flush_timeout * 1000 or 2000,            -- ms
     queue_size          = conf.queue_size or 1000,
-    max_msg_size        = conf.max_msg_sizeMB or 20,  
+    queue_sizeMB        = conf.queue_sizeMB or 20,  
+    max_msg_size        = conf.max_msg_sizeMB or 2,  
+    sending_queue_size  = conf.max_sending_queue_sizeMB or 200,  
     cur_alf             = alf_serializer.new(conf.log_bodies, conf.server_addr),
     sending_queue       = {},                             -- FILO queue
     sending_queue_size  = 0,

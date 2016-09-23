@@ -1,9 +1,3 @@
--- ALF implementation for ngx_lua/Kong
--- ALF version: 1.1.0
--- @version 2.0.0
--- @see https://github.com/Mashape/galileo-agent-spec
---
--- Incompatibilities with ALF 1.1 and important notes
 -- ==================================================
 -- * The following fields cannot be retrieved as of ngx_lua 0.10.2:
 --     * response.statusText
@@ -39,7 +33,7 @@ local gsub = string.gsub
 local _M = {
   _VERSION = "2.0.0",
   _ALF_VERSION = "1.1.0",
-  _ALF_CREATOR = "galileo-agent-kong"
+  _ALF_CREATOR = "bufferhttml-agent-kong"
 }
 
 local _mt = {

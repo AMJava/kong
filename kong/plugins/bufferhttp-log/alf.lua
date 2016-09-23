@@ -153,6 +153,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   }
 
 local max_size_mb = self.max_msg_size * 2^20
+ngx.log(ngx.ERR, "Error ", "")
 
 if #cjson.encode(entries[idx]) > max_size_mb then
 --ngx.log(WARN, "Message size is greater then max_size param: "..#cjson.encode(entries[idx])..">msx_max_size:"..msg_max_size)

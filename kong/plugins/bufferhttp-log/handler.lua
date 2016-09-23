@@ -68,7 +68,6 @@ function BufferHTTPHandler:log(conf)
       return
     end
     _alf_buffers[api_id] = buf
-    ngx.log(ngx.ERR, "HANDLER Buff "..tostring(cjson.encode(buf)), "")
   end
 
   local req_body, res_body

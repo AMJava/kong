@@ -197,8 +197,6 @@ end
 
 local buf = {
   version = _M._ALF_VERSION,
-  serviceToken = nil,
-  environment = nil,
   har = {
     log = {
       creator = {
@@ -216,17 +214,11 @@ local _alf_max_size = 20 * 2^20
 -- @param[type=string] service_token The ALF `serviceToken`
 -- @param[type=string] environment (optional) The ALF `environment`
 -- @treturn string The ALF, JSON encoded
-function _M:serialize(service_token, environment)
+function _M:serialize()
   if not self.entries then
     return nil, "no entries table"
-  elseif type(service_token) ~= "string" then
-    return nil, "arg #1 (service_token) must be a string"
-  elseif environment ~= nil and type(environment) ~= "string" then
-    return nil, "arg #2 (environment) must be a string"
   end
 
-  buf.serviceToken = service_token
-  buf.environment = environment
   buf.har.log.entries = self.entries
 
   local json = cjson.encode(buf)

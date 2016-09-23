@@ -144,7 +144,7 @@ _send = function(premature, self, to_send)
         return
       end
     end
-      log(ERR, "IN SEND RES HOST: "..parsed_url.host.." Port: "..parsed_url.port.." PATH:"..parsed_url.path, "")
+
     local res, err = client:request {
       method = "POST",
       path = parsed_url.path,
@@ -153,13 +153,13 @@ _send = function(premature, self, to_send)
         ["Content-Type"] = "application/json"
       }
   }
-  log(ERR, "AFTER RES", "")
+
     if not res then
       retry = true
       log(ERR, "could not send ALF to Host collector: ", err)
     else
       local body = res:read_body()
-      log(ERR, "AFTER RES 2", "")
+      log(ERR, "AFTER RES 2"..res.status, "")
       -- logging and error reports
       if res.status == 200 then
         log(ERR, "IN SEND 200", "")

@@ -220,8 +220,6 @@ end
 function _M.new(conf)
   if type(conf) ~= "table" then
     return nil, "arg #1 (conf) must be a table"
-  elseif type(conf.server_addr) ~= "string" then
-    return nil, "server_addr must be a string"
   elseif conf.log_bodies ~= nil and type (conf.log_bodies) ~= "boolean" then
     return nil, "log_bodies must be a boolean"
   elseif conf.retry_count ~= nil and type(conf.retry_count) ~= "number" then
@@ -253,7 +251,7 @@ function _M.new(conf)
     queue_sizeMB        	= conf.queue_size_mb * 2^20 or 20 * 2^20,  
     max_msg_size        	= conf.max_msg_size_mb * 2^20 or 2 * 2^20,  
     max_sending_queue_size  	= conf.max_sending_queue_size_mb * 2^20 or 200 * 2^20,  
-    cur_alf              	= alf_serializer.new(conf.log_bodies, conf.server_addr),
+    cur_alf              	= alf_serializer.new(conf.log_bodies),
     sending_queue      	    	= {},                             -- FILO queue
     sending_queue_size 	    	= 0,
     last_t              	= huge,

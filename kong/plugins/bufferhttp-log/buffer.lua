@@ -144,7 +144,7 @@ _send = function(premature, self, to_send)
         return
       end
     end
-      log(ERR, "IN SEND RES", "")
+      log(ERR, "IN SEND RES HOST: "..parsed_url.host.." Port: "..parsed_url.port.." PATH:"..parsed_url.path, "")
     local res, err = client:request {
       method = "POST",
       path = parsed_url.path,

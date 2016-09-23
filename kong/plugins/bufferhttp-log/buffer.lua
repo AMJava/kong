@@ -159,13 +159,10 @@ _send = function(premature, self, to_send)
       log(ERR, "could not send ALF to Host collector: ", err)
     else
       local body = res:read_body()
-      log(ERR, "AFTER RES 2"..res.status, "")
       -- logging and error reports
       if res.status == 200 then
-        log(ERR, "IN SEND 200", "")
         log(DEBUG, "Host collector saved the ALF (200 OK): ", body)
       elseif res.status == 207 then
-        log(ERR, "IN SEND 207", "")
         log(DEBUG, "Host collector partially saved the ALF "
                  .."(207 Multi-Status): ", body)
       elseif res.status >= 400 and res.status < 500 then

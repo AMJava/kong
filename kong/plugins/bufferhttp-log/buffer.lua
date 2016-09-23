@@ -21,6 +21,7 @@
 
 local alf_serializer = require "kong.plugins.bufferhttp-log.alf"
 local http = require "resty.http"
+local cjson = require "cjson"
 
 local setmetatable = setmetatable
 local timer_at = ngx.timer.at
@@ -240,12 +241,13 @@ function _M.new(conf)
 end
 
 function _M:add_entry(...)
+   ngx.log(ngx.ERR, "Buffer ADD ENTRY", "")
   local ok, err = self.cur_alf:add_entry(...)
   if not ok then
     log(ERR, "could not add entry to ALF: ", err)
     return ok, err
   end
-
+  ngx.log(ngx.ERR, "Buffer ADD ENTRY END"..tostring(cjson.encode(ok), "")
   if err >= self.queue_size then -- err is the queue size in this case
      ok, err = self:flush()
      if not ok then return nil, err end -- for our tests only

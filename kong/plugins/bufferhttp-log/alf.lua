@@ -38,9 +38,8 @@ local _mt = {
   __index = _M
 }
 
-function _M.new(log_bodies, server_addr)
+function _M.new(log_bodies)
   local alf = {
-    server_addr = server_addr,
     log_bodies = log_bodies,
     entries = {}
   }

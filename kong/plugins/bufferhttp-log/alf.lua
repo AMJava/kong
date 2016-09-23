@@ -21,11 +21,9 @@ local req_get_method = ngx.req.get_method
 local req_get_headers = ngx.req.get_headers
 local req_get_uri_args = ngx.req.get_uri_args
 local req_raw_header = ngx.req.raw_header
-local encode_base64 = ngx.encode_base64
-local http_version = ngx.req.http_version
 local setmetatable = setmetatable
 local tonumber = tonumber
-local os_date = os.date
+
 local pairs = pairs
 local type = type
 local gsub = string.gsub
@@ -48,22 +46,6 @@ function _M.new(log_bodies, server_addr)
   }
 
   return setmetatable(alf, _mt)
-end
-
--- Convert a table such as returned by ngx.*.get_headers()
--- to integer-indexed arrays.
-local function hash_to_array(t)
-  local arr = setmetatable({}, cjson.empty_array_mt)
-  for k, v in pairs(t) do
-    if type(v) == "table" then
-      for i = 1, #v do
-        arr[#arr+1] = {name = k, value = v[i]}
-      end
-    else
-      arr[#arr+1] = {name = k, value = v}
-    end
-  end
-  return arr
 end
 
 local function get_header(t, name, default)
@@ -96,29 +78,16 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   -- retrieval
   local var = _ngx.var
   local ctx = _ngx.ctx
-  local http_version = "HTTP/"..http_version()
   local request_headers = req_get_headers()
-  local request_content_len = get_header(request_headers, "content-length", 0)
   local request_transfer_encoding = get_header(request_headers, "transfer-encoding")
   local request_content_type = get_header(request_headers, "content-type",
                                           "application/octet-stream")
 
-  -- if log_bodies is false, we don't want to still call
-  -- ngx.req.read_body() anyways, hence we rely on RFC 2616
-  -- to determine if the request seems to have a body.
-  local req_has_body = tonumber(request_content_len) > 0
-                       or request_transfer_encoding ~= nil
-                       or request_content_type == "multipart/byteranges"
-
   local resp_headers = resp_get_headers()
-  local resp_content_len = get_header(resp_headers, "content-length", 0)
   local resp_transfer_encoding = get_header(resp_headers, "transfer-encoding")
   local resp_content_type = get_header(resp_headers, "content-type",
                             "application/octet-stream")
 
-  local resp_has_body = tonumber(resp_content_len) > 0
-                        or resp_transfer_encoding ~= nil
-                        or resp_content_type == "multipart/byteranges"
 
   -- request.postData. we don't check has_body here, but rather
   -- stick to what the request really contains, since it was
@@ -129,20 +98,12 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   if self.log_bodies then
     if req_body_str then
       req_body_size = #req_body_str
-      post_data = {
-        text = encode_base64(req_body_str),
-        encoding = "base64",
-        mimeType = request_content_type
-      }
+      post_data = req_body_str
     end
 
     if resp_body_str then
       resp_body_size = #resp_body_str
-      response_content = {
-        text = encode_base64(resp_body_str),
-        encoding = "base64",
-        mimeType = resp_content_type
-      }
+      response_content = resp_body_str
     end
   end
 
@@ -150,39 +111,41 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   local send_t = ctx.KONG_PROXY_LATENCY or 0
   local wait_t = ctx.KONG_WAITING_TIME or 0
   local receive_t = ctx.KONG_RECEIVE_TIME or 0
-
+  local api_id = ctx.api.id
+  local request_path = ctx.api.request_path
+  
   local idx = #self.entries + 1
 
   self.entries[idx] = {
-    time = send_t + wait_t + receive_t,
-    startedDateTime = os_date("!%Y-%m-%dT%TZ", req_start_time()),
-    serverIPAddress = self.server_addr,
-    clientIPAddress = var.remote_addr,
+    source = "debessmana",
+    timestamp = req_start_time()*1000,
+    id = api_id,
+    name = "KONG_API",
+    headers = request_headers,
+    payload = {
     request = {
-      httpVersion = http_version,
-      method = req_get_method(),
-      url = var.scheme .. "://" .. var.host .. var.request_uri,
-      queryString = hash_to_array(req_get_uri_args()),
-      headers = hash_to_array(request_headers),
-      headersSize = #req_raw_header(),
-      postData = post_data,
-      bodyCaptured = req_has_body,
-      bodySize = req_body_size,
+	  metadata = {
+      http_method = req_get_method(),
+      http_path = request_path,
+      http_remote_add = ngx.var.remote_addr,
+	  http_content_type = request_content_type,
+	  },
+    body = post_data,
+    headers = request_headers
     },
     response = {
-      status = _ngx.status,
-      statusText = "",
-      httpVersion = http_version,
-      headers = hash_to_array(resp_headers),
-      content = response_content,
-      headersSize = 0,
-      bodyCaptured = resp_has_body,
-      bodySize = resp_body_size
-    },
-    timings = {
-      send = send_t,
-      wait = wait_t,
-      receive = receive_t
+	  metadata = {
+      http_statuc_code = ""..ngx.status,
+      http_content_type = resp_content_type,
+      http_character_enc = resp_transfer_encoding
+	  },
+    body = response_content,
+    headers = resp_headers
+    }},
+    metrics = {
+      request_size = req_body_size,
+      response_size = resp_body_size,
+      execution_time = send_t + wait_t + receive_t
     }
   }
 
@@ -214,4 +177,3 @@ function _M:reset()
 end
 
 return _M
-

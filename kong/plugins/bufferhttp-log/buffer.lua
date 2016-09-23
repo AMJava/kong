@@ -265,7 +265,7 @@ end
 
 function _M:flush()
   local alf_json, err = self.cur_alf:serialize()
-
+  ngx.log(ngx.ERR, "Buffer ADD ENTRY END"..err.."TEST"..tostring(cjson.encode(alf_json)), "")
   self.cur_alf:reset()
 
   if not alf_json then

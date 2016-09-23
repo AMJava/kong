@@ -50,7 +50,11 @@ function BufferHTTPHandler:log(conf)
   local api_id = ctx.api.id
 
   local buf = _alf_buffers[api_id]
+  --test
+  if buf
   ngx.log(ngx.ERR, "NOT buff "..buf, "")
+  end
+  --test
   if not buf then
     ngx.log(ngx.ERR, "NOT buff ", "")
     local err

@@ -57,7 +57,7 @@ local function get_now()
 end
 
 local function log(lvl, ...)
-  ngx_log(lvl, "[galileo] ", ...)
+  ngx_log(lvl, "[bufferhttp-log] ", ...)
 end
 
 local _delayed_flush, _send
@@ -67,7 +67,6 @@ local function _create_delayed_timer(self)
    if not ok then
       log(ERR, "failed to create delayed flush timer: ", err)
    else
-      --log(DEBUG, "delayed timer created")
       self.timer_flush_pending = true
    end
 end
@@ -102,6 +101,25 @@ _delayed_flush = function(premature, self)
   end
 end
 
+-- Parse host url
+-- @param `url`  host url
+-- @return `parsed_url`  a table with host details like domain name, port, path etc
+local function parse_url(host_url)
+  local parsed_url = url.parse(host_url)
+  if not parsed_url.port then
+    if parsed_url.scheme == "http" then
+      parsed_url.port = 80
+     elseif parsed_url.scheme == HTTPS then
+      parsed_url.port = 443
+     end
+  end
+  if not parsed_url.path then
+    parsed_url.path = "/"
+  end
+  return parsed_url
+end
+
+
 _send = function(premature, self, to_send)
   if premature then return end
 
@@ -111,23 +129,25 @@ _send = function(premature, self, to_send)
 
   local client = http.new()
   client:set_timeout(self.connection_timeout)
-
-  local ok, err = client:connect(self.host, self.port)
+  
+  local parsed_url = parse_url(conf.endpoint)
+  
+  local ok, err = client:connect(parsed_url.host, parsed_url.port)
   if not ok then
     retry = true
-    log(ERR, "could not connect to Galileo collector: ", err)
+    log(ERR, "could not connect to Host collector: ", err)
   else
-    if self.https then
-      local ok, err = client:ssl_handshake(false, self.host, self.https_verify)
+    if parsed_url.scheme == HTTPS then
+      local ok, err = client:ssl_handshake(false, parsed_url.host, self.https_verify)
       if not ok then
-        log(ERR, "could not perform SSL handshake with Galileo collector: ", err)
+        log(ERR, "could not perform SSL handshake with Host collector: ", err)
         return
       end
     end
 
     local res, err = client:request {
       method = "POST",
-      path = "/1.1.0/single",
+      path = parsed_url.path,
       body = to_send.payload,
       headers = {
         ["Content-Type"] = "application/json"
@@ -135,26 +155,26 @@ _send = function(premature, self, to_send)
     }
     if not res then
       retry = true
-      log(ERR, "could not send ALF to Galileo collector: ", err)
+      log(ERR, "could not send ALF to Host collector: ", err)
     else
       local body = res:read_body()
       -- logging and error reports
       if res.status == 200 then
-        log(DEBUG, "Galileo collector saved the ALF (200 OK): ", body)
+        log(DEBUG, "Host collector saved the ALF (200 OK): ", body)
       elseif res.status == 207 then
-        log(DEBUG, "Galileo collector partially saved the ALF "
+        log(DEBUG, "Host collector partially saved the ALF "
                  .."(207 Multi-Status): ", body)
       elseif res.status >= 400 and res.status < 500 then
-        log(WARN, "Galileo collector refused this ALF (", res.status, "): ", body)
+        log(WARN, "Host collector refused this ALF (", res.status, "): ", body)
       elseif res.status >= 500 then
         retry = true
-        log(ERR, "Galileo collector HTTP error (", res.status, "): ", body)
+        log(ERR, "Host collector HTTP error (", res.status, "): ", body)
       end
     end
 
     local ok, err = client:set_keepalive()
     if ok ~= 1 then
-      log(ERR, "could not keepalive Galileo collector connection: ", err)
+      log(ERR, "could not keepalive Host collector connection: ", err)
     end
   end
 
@@ -165,7 +185,7 @@ _send = function(premature, self, to_send)
     retry_delay_idx = retry_delay_idx + 1
     next_retry_delay = min(_retry_max_delay, pow(retry_delay_idx, 2))
 
-    log(WARN, "could not reach Galileo collector, retrying in: ", next_retry_delay)
+    log(WARN, "could not reach Host collector, retrying in: ", next_retry_delay)
 
     to_send.retries = to_send.retries + 1
     if to_send.retries < self.retry_count then
@@ -213,16 +233,12 @@ function _M.new(conf)
     return nil, "flush_timeout must be a number"
   elseif conf.queue_size ~= nil and type(conf.queue_size) ~= "number" then
     return nil, "queue_size must be a number"
-  elseif type(conf.host) ~= "string" then
+  elseif type(conf.endpoint) ~= "string" then
     return nil, "host must be a string"
-  elseif type(conf.port) ~= "number" then
-    return nil, "port must be a number"
   end
 
   local buffer = {
-    host                = conf.host,
-    port                = conf.port,
-    https               = conf.https,
+    endpoint            = conf.endpoint,
     https_verify        = conf.https_verify,
     log_bodies          = conf.log_bodies or false,
     retry_count         = conf.retry_count or 0,

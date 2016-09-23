@@ -67,6 +67,7 @@ local function _create_delayed_timer(self)
    if not ok then
       log(ERR, "failed to create delayed flush timer: ", err)
    else
+     ngx.log(ngx.ERR, "DELAYED FLUSH=OK", "")
       --log(DEBUG, "delayed timer created")
       self.timer_flush_pending = true
    end

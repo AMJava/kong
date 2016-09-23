@@ -38,8 +38,8 @@ local ERR = ngx.ERR
 local DEBUG = ngx.WARN
 local WARN = ngx.WARN
 
-local _buffer_max_mb = 200
-local _buffer_max_size = _buffer_max_mb * 2^20
+--local _buffer_max_mb = 200
+--local _buffer_max_size = _buffer_max_mb * 2^20
 
 -- per-worker retry policy
 -- simply increment the delay by n_try^2
@@ -283,9 +283,9 @@ function _M:flush()
   if not alf_json then
     log(ERR, "could not serialize ALF: ", err)
     return nil, err
-  elseif self.sending_queue_size + #alf_json > _buffer_max_size then
-    log(WARN, "buffer is full, discarding this ALF")
-    return nil, "buffer full"
+ -- elseif self.sending_queue_size + #alf_json > _buffer_max_size then
+ --   log(WARN, "buffer is full, discarding this ALF")
+ --   return nil, "buffer full"
   end
 
   log(DEBUG, "flushing ALF for sending (", err, " entries)")

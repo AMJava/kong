@@ -5,7 +5,6 @@
 
 local BasePlugin = require "kong.plugins.base_plugin"
 local Buffer = require "kong.plugins.bufferhttp-log.buffer"
-local cjson = require "cjson"
 
 local read_body = ngx.req.read_body
 local get_body_data = ngx.req.get_body_data
@@ -52,14 +51,7 @@ function BufferHTTPHandler:log(conf)
 
   local buf = _alf_buffers[api_id]
   
-  --test
-  if buf then
-  ngx.log(ngx.ERR, "HANDLER Buff "..tostring(cjson.encode(buf)), "")
-  end
-  --test
-  
   if not buf then
-    ngx.log(ngx.ERR, "NOT buff ", "")
     local err
     conf.server_addr = _server_addr
     buf, err = Buffer.new(conf)

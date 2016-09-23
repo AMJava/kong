@@ -249,9 +249,11 @@ function _M:add_entry(...)
   end
   ngx.log(ngx.ERR, "Buffer ADD ENTRY END"..err.."TEST"..tostring(cjson.encode(ok)), "")
   if err >= self.queue_size then -- err is the queue size in this case
+     ngx.log(ngx.ERR, "ERR>QUEUE SIZE", "")
      ok, err = self:flush()
      if not ok then return nil, err end -- for our tests only
    elseif not self.timer_flush_pending then -- start delayed timer if none
+     ngx.log(ngx.ERR, "FLUSH_PENDING=FALSE", "")
      _create_delayed_timer(self)
    end
 

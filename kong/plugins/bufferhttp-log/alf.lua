@@ -155,8 +155,8 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
 local max_size_mb = self.max_msg_size * 2^20
 
 if #cjson.encode(entries[idx]) > max_size_mb then
-  entries[idx].payload.request.body = ""
-  entries[idx].payload.response.body = ""
+  self.entries[idx].payload.request.body = ""
+  self.entries[idx].payload.response.body = ""
 end
 
   return self.entries[idx], idx

@@ -189,19 +189,6 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   return self.entries[idx], idx
 end
 
-local buf = {
-  version = _M._ALF_VERSION,
-  har = {
-    log = {
-      creator = {
-        name = _M._ALF_CREATOR,
-        version = _M._VERSION
-      },
-      entries = nil
-    }
-  }
-}
-
 local _alf_max_size = 20 * 2^20
 
 --- Encode the current ALF to JSON
@@ -213,9 +200,7 @@ function _M:serialize()
     return nil, "no entries table"
   end
 
-  buf.har.log.entries = self.entries
-
-  local json = cjson.encode(buf)
+  local json = cjson.encode(self.entries)
   if #json > _alf_max_size then
     return nil, "ALF too large (> 20MB)"
   end

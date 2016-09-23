@@ -287,7 +287,7 @@ function _M:flush()
   if not alf_json then
     log(ERR, "could not serialize ALF: ", err)
     return nil, err
-  elseif self.sending_queue_size + #alf_json > max_sending_queue_size then
+  elseif self.sending_queue_size + #alf_json > self.max_sending_queue_size then
     log(WARN, "sending queue is full, discarding this ALF")
     return nil, "buffer full"
   end

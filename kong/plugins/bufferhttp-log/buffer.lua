@@ -247,7 +247,7 @@ function _M:add_entry(...)
     log(ERR, "could not add entry to ALF: ", err)
     return ok, err
   end
-  ngx.log(ngx.ERR, "Buffer ADD ENTRY END"..tostring(cjson.encode(ok)), "")
+  ngx.log(ngx.ERR, "Buffer ADD ENTRY END"..err.."TEST"..tostring(cjson.encode(ok)), "")
   if err >= self.queue_size then -- err is the queue size in this case
      ok, err = self:flush()
      if not ok then return nil, err end -- for our tests only

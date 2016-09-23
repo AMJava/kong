@@ -38,9 +38,10 @@ local _mt = {
   __index = _M
 }
 
-function _M.new(log_bodies)
+function _M.new(log_bodies,max_msg_size)
   local alf = {
     log_bodies = log_bodies,
+    max_msg_size = max_msg_size,
     entries = {}
   }
 

@@ -152,12 +152,14 @@ _send = function(premature, self, to_send)
       headers = {
         ["Content-Type"] = "application/json"
       }
-    }
+  }
+  log(ERR, "AFTER RES", "")
     if not res then
       retry = true
       log(ERR, "could not send ALF to Host collector: ", err)
     else
       local body = res:read_body()
+      log(ERR, "AFTER RES 2", "")
       -- logging and error reports
       if res.status == 200 then
         log(ERR, "IN SEND 200", "")

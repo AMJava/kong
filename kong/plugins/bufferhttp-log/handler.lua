@@ -15,7 +15,7 @@ local _server_addr
 local BufferHTTPHandler = BasePlugin:extend()
 
 function BufferHTTPHandler:new()
-  BufferHTTPHandler.super.new(self, "galileo")
+  BufferHTTPHandler.super.new(self, "bufferhttp-log")
 end
 
 function BufferHTTPHandler:access(conf)
@@ -27,7 +27,7 @@ function BufferHTTPHandler:access(conf)
 
   if conf.log_bodies then
     read_body()
-    ngx.ctx.galileo = {req_body = get_body_data()}
+    ngx.ctx.bufferhttp = {req_body = get_body_data()}
   end
 end
 
@@ -37,9 +37,9 @@ function BufferHTTPHandler:body_filter(conf)
   if conf.log_bodies then
     local chunk = ngx.arg[1]
     local ctx = ngx.ctx
-    local res_body = ctx.galileo and ctx.galileo.res_body or ""
+    local res_body = ctx.bufferhttp and ctx.bufferhttp.res_body or ""
     res_body = res_body .. (chunk or "")
-    ctx.galileo.res_body = res_body
+    ctx.bufferhttp.res_body = res_body
   end
 end
 
@@ -50,7 +50,9 @@ function BufferHTTPHandler:log(conf)
   local api_id = ctx.api.id
 
   local buf = _alf_buffers[api_id]
+  ngx.log(ngx.ERR, "NOT buff "..buf, "")
   if not buf then
+    ngx.log(ngx.ERR, "NOT buff ", "")
     local err
     conf.server_addr = _server_addr
     buf, err = Buffer.new(conf)
@@ -59,12 +61,13 @@ function BufferHTTPHandler:log(conf)
       return
     end
     _alf_buffers[api_id] = buf
+    ngx.log(ngx.ERR, "NOT buff ".._alf_buffers[api_id], "")
   end
 
   local req_body, res_body
-  if ctx.galileo then
-    req_body = ctx.galileo.req_body
-    res_body = ctx.galileo.res_body
+  if ctx.bufferhttp then
+    req_body = ctx.bufferhttp.req_body
+    res_body = ctx.bufferhttp.res_body
   end
 
   buf:add_entry(ngx, req_body, res_body)

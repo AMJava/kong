@@ -10,7 +10,6 @@ local read_body = ngx.req.read_body
 local get_body_data = ngx.req.get_body_data
 
 local _alf_buffers = {} -- buffers per-api
-local _server_addr
 
 local BufferHTTPHandler = BasePlugin:extend()
 
@@ -20,10 +19,6 @@ end
 
 function BufferHTTPHandler:access(conf)
   BufferHTTPHandler.super.access(self)
-
-  if not _server_addr then
-    _server_addr = ngx.var.server_addr
-  end
 
   if conf.log_bodies then
     read_body()
@@ -53,7 +48,6 @@ function BufferHTTPHandler:log(conf)
   
   if not buf then
     local err
-    conf.server_addr = _server_addr
     buf, err = Buffer.new(conf)
     if not buf then
       ngx.log(ngx.ERR, "could not create ALF buffer: ", err)

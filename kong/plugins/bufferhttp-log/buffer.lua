@@ -38,8 +38,6 @@ local ERR = ngx.ERR
 local DEBUG = ngx.WARN
 local WARN = ngx.WARN
 
---local _buffer_max_mb = 200
---local _buffer_max_size = _buffer_max_mb * 2^20
 
 -- per-worker retry policy
 -- simply increment the delay by n_try^2
@@ -239,22 +237,22 @@ function _M.new(conf)
   end
 
   local buffer = {
-    endpoint            = conf.endpoint,
-    https_verify        = conf.https_verify,
-    log_bodies          = conf.log_bodies or false,
-    retry_count         = conf.retry_count or 0,
-    connection_timeout  = conf.connection_timeout and conf.connection_timeout * 1000 or 30000, -- ms
-    flush_timeout       = conf.flush_timeout and conf.flush_timeout * 1000 or 2000,            -- ms
-    queue_size          = conf.queue_size or 1000,
-    queue_sizeMB        = conf.queue_sizeMB or 20,  
-    max_msg_size        = conf.max_msg_sizeMB or 2,  
-    sending_queue_size  = conf.max_sending_queue_sizeMB or 200,  
-    cur_alf             = alf_serializer.new(conf.log_bodies, conf.server_addr),
-    sending_queue       = {},                             -- FILO queue
-    sending_queue_size  = 0,
-    last_t              = huge,
-    timer_flush_pending = false,
-    timer_send_pending  = false
+    endpoint            	= conf.endpoint,
+    https_verify        	= conf.https_verify,
+    log_bodies          	= conf.log_bodies or false,
+    retry_count         	= conf.retry_count or 0,
+    connection_timeout  	= conf.connection_timeout and conf.connection_timeout * 1000 or 30000, -- ms
+    flush_timeout       	= conf.flush_timeout and conf.flush_timeout * 1000 or 2000,            -- ms
+    queue_size         	    = conf.queue_size or 1000,
+    queue_sizeMB        	= conf.queue_sizeMB * 2^20 or 20 * 2^20,  
+    max_msg_size        	= conf.max_msg_sizeMB or 2,  
+    max_sending_queue_size  = conf.max_sending_queue_sizeMB * 2^20 or 200 * 2^20,  
+    cur_alf              	= alf_serializer.new(conf.log_bodies, conf.server_addr),
+    sending_queue      	    = {},                             -- FILO queue
+    sending_queue_size 	    = 0,
+    last_t              	= huge,
+    timer_flush_pending 	= false,
+    timer_send_pending  	= false
   }
 
   return setmetatable(buffer, _mt)
@@ -269,7 +267,10 @@ function _M:add_entry(...)
   if err >= self.queue_size then -- err is the queue size in this case
      ok, err = self:flush()
      if not ok then return nil, err end -- for our tests only
-   elseif not self.timer_flush_pending then -- start delayed timer if none
+	 elseif #self.cur_alf:serialize() >  self.queue_sizeMB then -- err is the queue size in this case
+     ok, err = self:flush()
+     if not ok then return nil, err end -- for our tests only
+	 elseif not self.timer_flush_pending then -- start delayed timer if none
      _create_delayed_timer(self)
    end
 
@@ -286,9 +287,9 @@ function _M:flush()
   if not alf_json then
     log(ERR, "could not serialize ALF: ", err)
     return nil, err
- -- elseif self.sending_queue_size + #alf_json > _buffer_max_size then
- --   log(WARN, "buffer is full, discarding this ALF")
- --   return nil, "buffer full"
+  elseif self.sending_queue_size + #alf_json > max_sending_queue_size then
+    log(WARN, "sending queue is full, discarding this ALF")
+    return nil, "buffer full"
   end
 
   log(DEBUG, "flushing ALF for sending (", err, " entries)")

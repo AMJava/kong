@@ -129,8 +129,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
     request = {
 	  metadata = {
       http_method = req_get_method(),
-      http_path = request_path,
-      app_key = "TEST",		
+      http_path = request_path,	
       http_remote_add = ngx.var.remote_addr,
 	  http_content_type = request_content_type,
 	  },

@@ -162,7 +162,7 @@ end
   return self.entries[idx], idx
 end
 
-local _alf_max_size = 20 * 2^20
+--local _alf_max_size = 20 * 2^20
 
 --- Encode the current ALF to JSON
 -- @param[type=string] service_token The ALF `serviceToken`
@@ -174,9 +174,9 @@ function _M:serialize()
   end
 
   local json = cjson.encode(self.entries)
-  if #json > _alf_max_size then
-    return nil, "ALF too large (> 20MB)"
-  end
+--  if #json > _alf_max_size then
+--    return nil, "ALF too large (> 20MB)"
+--  end
 
   return gsub(json, "\\/", "/"), #self.entries
 end

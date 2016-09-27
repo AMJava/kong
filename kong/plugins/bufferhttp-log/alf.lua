@@ -15,6 +15,7 @@
 -- * timings.connect is ignored
 
 local cjson = require "cjson.safe"
+local uuid = require "lua_uuid"
 local resp_get_headers = ngx.resp.get_headers
 local req_start_time = ngx.req.start_time
 local req_get_method = ngx.req.get_method
@@ -122,7 +123,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   self.entries[idx] = {
     source = "debessmana",
     timestamp = req_start_time()*1000,
-    id = api_id,
+    id = uuid(),
     name = "KONG_API",
     headers = request_headers,
     payload = {

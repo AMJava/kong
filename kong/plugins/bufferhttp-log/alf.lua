@@ -15,7 +15,7 @@
 -- * timings.connect is ignored
 
 local cjson = require "cjson.safe"
-local uuid = require "lua_uuid"
+local uuid = require("kong.tools.utils").uuid
 local resp_get_headers = ngx.resp.get_headers
 local req_start_time = ngx.req.start_time
 local req_get_method = ngx.req.get_method

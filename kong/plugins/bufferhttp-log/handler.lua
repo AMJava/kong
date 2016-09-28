@@ -1,7 +1,7 @@
 -- Buffers request/response bodies if asked so in the plugin's config.
 -- Caches the server's address to avoid further syscalls.
 --
--- Maintains one ALF Buffer per galileo plugin per worker.
+-- Maintains one ALF Buffer per bufferhttp plugin per worker.
 
 local BasePlugin = require "kong.plugins.base_plugin"
 local Buffer = require "kong.plugins.bufferhttp-log.buffer"

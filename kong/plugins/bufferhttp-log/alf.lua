@@ -25,7 +25,7 @@ local req_raw_header = ngx.req.raw_header
 local setmetatable = setmetatable
 local tonumber = tonumber
 
-local now = ngx.now
+local now = os.time()
 
 local pairs = pairs
 local type = type

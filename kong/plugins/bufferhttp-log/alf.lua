@@ -26,7 +26,6 @@ local setmetatable = setmetatable
 local tonumber = tonumber
 
 local now = ngx.now
-local huge = math.huge
 
 local pairs = pairs
 local type = type
@@ -127,7 +126,6 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
     source = "debessmana",
     timestamp = req_start_time()*1000,
     timestamp1 = now()*1000,
-    timestamp2 = huge()*1000,
     id = uuid(),
     name = "KONG_API",
     headers = request_headers,

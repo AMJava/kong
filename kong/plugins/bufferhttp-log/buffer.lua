@@ -35,7 +35,7 @@ local min = math.min
 local pow = math.pow
 local now = ngx.now
 local ERR = ngx.ERR
-local DEBUG = ngx.INFO
+local DEBUG = ngx.WARN
 local WARN = ngx.WARN
 
 
@@ -285,7 +285,7 @@ end
 function _M:flush()
   local alf_json, err = self.cur_alf:serialize()
   self.cur_alf:reset()
-
+ngx.log(ngx.ERR, "Buffer ADD ENTRY END"..err.."TEST"..tostring(alf_json), "")
   if not alf_json then
     log(ERR, "could not serialize ALF: ", err)
     return nil, err

@@ -185,7 +185,7 @@ function _M:serialize()
     json = gsub(json, v, "%1\"*******\"")
   end
 	
-  return gsub(json, "\\/", "/"), #self.entries
+  return json, #self.entries
 end
 
 --- Empty the ALF

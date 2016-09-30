@@ -9,6 +9,8 @@ return {
     log_bodies = {type = "boolean", default = false},
     connection_timeout = {type = "number", default = 30},
     endpoint = {type = "string", required = true, default = "http://"},
+    secure_message = {type = "boolean", default = false},
+    secure_patterns = {type = "array", default = { "(assword':)'(.-)'", "(token':)'(.-)'"} },
     https_verify = {type = "boolean", default = false}
   }
 }

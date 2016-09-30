@@ -183,12 +183,16 @@ function _M:serialize()
   json = gsub(json, "\\/", "/")
   json = gsub(json, "\\\"", "\"")	
 	
-  local patterns = {"(assword\":)\"(.-)\"","(token\":)\"(.-)\""}
+  local patterns = {"(assword\":)\"(.-)\"","(token\":)\"(.-)\"","(assword\\\":)\\\"(.-)\\\""}
   for i,v in ipairs(patterns) do
     json = gsub(json, v, "%1\"*******\"")
   end
-	
-  return json, #self.entries
+
+  local patterns2 = {"(assword\\\":)\\\"(.-)\\\"","(token\\\":)\\\"(.-)\\\""}
+  for i,v in ipairs(patterns2) do
+    json = gsub(json, v, "%1\\\"*******\\\"")
+  end
+  return gsub(json, "\\/", "/"), #self.entries
 end
 
 --- Empty the ALF

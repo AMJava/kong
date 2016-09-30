@@ -43,7 +43,8 @@ local _mt = {
 function _M.new(log_bodies,max_msg_size)
   local alf = {
     log_bodies = log_bodies,
-    max_msg_size = max_msg_size
+    max_msg_size = max_msg_size,
+    entries = {}
   }
 
   return setmetatable(alf, _mt)
@@ -180,11 +181,6 @@ function _M:serialize()
 --    return nil, "ALF too large (> 20MB)"
 --  end
 
-  local patterns = {"(assword':)'(.-)'","(token':)'(.-)'"}
-  for i,v in ipairs(patterns) do
-    json = gsub(json, v, "%1'*******'")
-  end
-	
   return gsub(json, "\\/", "/"), #self.entries
 end
 

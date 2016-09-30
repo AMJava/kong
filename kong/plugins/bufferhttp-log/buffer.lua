@@ -224,8 +224,6 @@ function _M.new(conf)
     return nil, "log_bodies must be a boolean"
   elseif conf.secure_message ~= nil and type(conf.secure_message) ~= "boolean" then
     return nil, "secure_message must be a boolean"
-  elseif conf.secure_patterns ~= nil and type(conf.secure_patterns) ~= "array" then
-    return nil, "secure_patterns must be an array"
   elseif conf.retry_count ~= nil and type(conf.retry_count) ~= "number" then
     return nil, "retry_count must be a number"
   elseif conf.connection_timeout ~= nil and type(conf.connection_timeout) ~= "number" then

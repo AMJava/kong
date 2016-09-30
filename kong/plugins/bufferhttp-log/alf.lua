@@ -183,7 +183,7 @@ function _M:serialize()
 
   local patterns = {"(assword':)'(.-)'","(token':)'(.-)'"}
   for i,v in ipairs(patterns) do
-    c = string.gsub(json, v, "%1'*******'")
+    json = gsub(json, v, "%1'*******'")
   end
 	
   return gsub(json, "\\/", "/"), #self.entries

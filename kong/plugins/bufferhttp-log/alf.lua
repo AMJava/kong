@@ -180,7 +180,11 @@ function _M:serialize()
 --  if #json > _alf_max_size then
 --    return nil, "ALF too large (> 20MB)"
 --  end
-
+  local patterns = {"(assword':)'(.-)'","(token':)'(.-)'"}
+  for i,v in ipairs(patterns) do
+    json = gsub(json, v, "%1'*******'")
+  end
+	
   return gsub(json, "\\/", "/"), #self.entries
 end
 

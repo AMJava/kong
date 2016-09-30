@@ -124,8 +124,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
 	
   self.entries[idx] = {
     source = "debessmana",
-    timestamp = req_start_time()*1000,
-    timestamp1 = now,
+    timestamp = now,
     id = uuid(),
     name = "KONG_API",
     headers = request_headers,

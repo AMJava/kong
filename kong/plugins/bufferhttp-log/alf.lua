@@ -181,6 +181,11 @@ function _M:serialize()
 --    return nil, "ALF too large (> 20MB)"
 --  end
 
+  local patterns = {"(assword':)'(.-)'","(token':)'(.-)'"}
+  for i,v in ipairs(patterns) do
+    c = string.gsub(json, v, "%1'*******'")
+  end
+	
   return gsub(json, "\\/", "/"), #self.entries
 end
 

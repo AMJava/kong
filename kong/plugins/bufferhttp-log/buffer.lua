@@ -220,22 +220,8 @@ end
 function _M.new(conf)
   if type(conf) ~= "table" then
     return nil, "arg #1 (conf) must be a table"
-  elseif conf.retry_count ~= nil and type(conf.retry_count) ~= "number" then
-    return nil, "retry_count must be a number"
-  elseif conf.connection_timeout ~= nil and type(conf.connection_timeout) ~= "number" then
-    return nil, "connection_timeout must be a number"
-  elseif conf.queue_size_mb ~= nil and type(conf.queue_size_mb) ~= "number" then
-    return nil, "queue_size_mb must be a number"
-  elseif conf.max_sending_queue_size_mb ~= nil and type(conf.max_sending_queue_size_mb) ~= "number" then
-    return nil, "max_sending_queue_size_mb must be a number"
-  elseif conf.flush_timeout ~= nil and type(conf.flush_timeout) ~= "number" then
-    return nil, "flush_timeout must be a number"
-  elseif conf.queue_size ~= nil and type(conf.queue_size) ~= "number" then
-    return nil, "queue_size must be a number"
-  elseif type(conf.endpoint) ~= "string" then
-    return nil, "host must be a string"
   end
-
+	
   local buffer = {
     endpoint            	= conf.endpoint,
     https_verify        	= conf.https_verify,	

@@ -241,7 +241,7 @@ function _M.new(conf)
   elseif type(conf.endpoint) ~= "string" then
     return nil, "host must be a string"
   end
-  log(WARN, "TEST:"..conf.secure_patterns)
+  log(WARN, "TEST:"..table.concat(conf.secure_patterns, ","))
   local buffer = {
     endpoint            	= conf.endpoint,
     https_verify        	= conf.https_verify,

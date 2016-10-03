@@ -191,7 +191,7 @@ function _M:serialize()
  
      if self.secure_patterns == nil then
 	patterns = {"(assword\":)\"(.-)\"","(token\":)\"(.-)\""}
-        patterns2 = {"(assword\\\":)\\\"(.-)\\\"","(token\\\":)\\\"(.-)\\\""}
+        patterns2 = {"(assword\":)\"(.-)\"","(token\":)\"(.-)\""}
      else
 	patterns = self.secure_patterns	
 	patterns2 = self.secure_patterns	

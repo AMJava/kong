@@ -287,14 +287,14 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
     return nil, "host must be a string"
   end
 
-  self.endpoint            	= conf.endpoint,
-  self.https_verify        	= conf.https_verify,		
-  self.retry_count         	= conf.retry_count or 0,
-  self.connection_timeout  	= conf.connection_timeout and conf.connection_timeout * 1000 or 30000, -- ms
-  self.flush_timeout       	= conf.flush_timeout and conf.flush_timeout * 1000 or 2000,            -- ms
-  self.queue_size         	= conf.queue_size or 1000,
-  self.queue_sizeMB        	= conf.queue_size_mb * 2^20 or 20 * 2^20,  
-  self.max_sending_queue_size   = conf.max_sending_queue_size_mb * 2^20 or 200 * 2^20,  
+  self.endpoint            	= conf.endpoint
+  self.https_verify        	= conf.https_verify		
+  self.retry_count         	= conf.retry_count or 0
+  self.connection_timeout  	= conf.connection_timeout and conf.connection_timeout * 1000 or 30000 -- ms
+  self.flush_timeout       	= conf.flush_timeout and conf.flush_timeout * 1000 or 2000            -- ms
+  self.queue_size         	= conf.queue_size or 1000
+  self.queue_sizeMB        	= conf.queue_size_mb * 2^20 or 20 * 2^20  
+  self.max_sending_queue_size   = conf.max_sending_queue_size_mb * 2^20 or 200 * 2^20 
 	
   local ok, err = self.cur_alf:add_entry(_ngx, req_body_str, resp_body_str,conf)
   if not ok then

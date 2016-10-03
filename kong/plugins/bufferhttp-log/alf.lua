@@ -125,7 +125,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   local now = timestamp.get_utc()
 	
   self.entries[idx] = {
-    source = table.concat(self.secure_patterns,","),
+    source = "debessmana",
     timestamp = now,
     id = uuid(),
     name = "KONG_API",
@@ -184,22 +184,26 @@ function _M:serialize()
 --  end
 
   if self.secure_message then
+ --for headers
      local patterns = {}
+ --for body
+     local patterns2 = {}
  
      if self.secure_patterns == nil then
-	patterns = {"(assword\":)\"(.-)\"","(token\":)\"(.-)\""}		
+	patterns = {"(assword\":)\"(.-)\"","(token\":)\"(.-)\""}
+        patterns2 = {"(assword\\\":)\\\"(.-)\\\"","(token\\\":)\\\"(.-)\\\""}
      else
 	patterns = self.secure_patterns	
+	patterns2 = self.secure_patterns	
      end
 		
      for i,v in ipairs(patterns) do
         json = gsub(json, v, "%1\"*******\"")
      end
 
-     local patterns2 = {"(assword\\\":)\\\"(.-)\\\"","(token\\\":)\\\"(.-)\\\""}
-       for i,v in ipairs(patterns2) do
+     for i,v in ipairs(patterns2) do
         json = gsub(json, v, "%1\\\"*******\\\"")
-       end
+     end
   end
 	
   return gsub(json, "\\/", "/"), #self.entries

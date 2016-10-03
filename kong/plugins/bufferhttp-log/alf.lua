@@ -81,6 +81,9 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
     return nil, "arg #4 (conf) must be a table"
   end
 
+  self.secure_message = conf.secure_message
+  self.secure_patterns = conf.secure_patterns
+	
   -- retrieval
   local var = _ngx.var
   local ctx = _ngx.ctx

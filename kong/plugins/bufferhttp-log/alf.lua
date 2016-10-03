@@ -79,8 +79,16 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
     return nil, "arg #3 (resp_body_str) must be a string"
   elseif type(conf) ~= "table" then
     return nil, "arg #4 (conf) must be a table"
+  elseif conf.log_bodies ~= nil and type (conf.log_bodies) ~= "boolean" then
+    return nil, "log_bodies must be a boolean"
+  elseif conf.secure_message ~= nil and type (conf.secure_message) ~= "boolean" then
+    return nil, "secure_message must be a boolean"
+  elseif conf.max_msg_size_mb ~= nil and type(conf.max_msg_size_mb) ~= "number" then
+    return nil, "max_msg_size_mb must be a number"
   end
 
+  self.log_bodies = conf.log_bodies
+  self.max_msg_size = conf.max_msg_size_mb
   self.secure_message = conf.secure_message
   self.secure_patterns = conf.secure_patterns
 	
@@ -107,7 +115,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   local req_body_size = tonumber(request_content_len)
   local resp_body_size = tonumber(resp_content_len)
 
-  if conf.log_bodies then
+  if self.log_bodies then
     if req_body_str then
       req_body_size = #req_body_str
       post_data = req_body_str

@@ -125,7 +125,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str)
   local now = timestamp.get_utc()
 	
   self.entries[idx] = {
-    source = table.concat(self.secure_patterns,",")
+    source = table.concat(self.secure_patterns,","),
     timestamp = now,
     id = uuid(),
     name = "KONG_API",

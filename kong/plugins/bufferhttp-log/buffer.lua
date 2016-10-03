@@ -244,10 +244,7 @@ function _M.new(conf)
 
   local buffer = {
     endpoint            	= conf.endpoint,
-    https_verify        	= conf.https_verify,
-    secure_message          	= conf.secure_message or false,
-    secure_patterns          	= conf.secure_patterns,
-    log_bodies          	= conf.log_bodies or false,		
+    https_verify        	= conf.https_verify,	
     retry_count         	= conf.retry_count or 0,
     connection_timeout  	= conf.connection_timeout and conf.connection_timeout * 1000 or 30000, -- ms
     flush_timeout       	= conf.flush_timeout and conf.flush_timeout * 1000 or 2000,            -- ms
@@ -262,12 +259,44 @@ function _M.new(conf)
     timer_send_pending  	= false
   }
 
-  log(WARN, "LOG BODY in new=")
   return setmetatable(buffer, _mt)
 end
 
-function _M:add_entry(...)
-  local ok, err = self.cur_alf:add_entry(...)
+function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
+  if type(conf) ~= "table" then
+    return nil, "arg #1 (conf) must be a table"
+  elseif conf.log_bodies ~= nil and type (conf.log_bodies) ~= "boolean" then
+    return nil, "log_bodies must be a boolean"
+  elseif conf.secure_message ~= nil and type (conf.secure_message) ~= "boolean" then
+    return nil, "secure_message must be a boolean"
+  elseif conf.retry_count ~= nil and type(conf.retry_count) ~= "number" then
+    return nil, "retry_count must be a number"
+  elseif conf.connection_timeout ~= nil and type(conf.connection_timeout) ~= "number" then
+    return nil, "connection_timeout must be a number"
+  elseif conf.queue_size_mb ~= nil and type(conf.queue_size_mb) ~= "number" then
+    return nil, "queue_size_mb must be a number"
+  elseif conf.max_msg_size_mb ~= nil and type(conf.max_msg_size_mb) ~= "number" then
+    return nil, "max_msg_size_mb must be a number"
+  elseif conf.max_sending_queue_size_mb ~= nil and type(conf.max_sending_queue_size_mb) ~= "number" then
+    return nil, "max_sending_queue_size_mb must be a number"
+  elseif conf.flush_timeout ~= nil and type(conf.flush_timeout) ~= "number" then
+    return nil, "flush_timeout must be a number"
+  elseif conf.queue_size ~= nil and type(conf.queue_size) ~= "number" then
+    return nil, "queue_size must be a number"
+  elseif type(conf.endpoint) ~= "string" then
+    return nil, "host must be a string"
+  end
+
+  self.endpoint            	= conf.endpoint,
+  self.https_verify        	= conf.https_verify,		
+  self.retry_count         	= conf.retry_count or 0,
+  self.connection_timeout  	= conf.connection_timeout and conf.connection_timeout * 1000 or 30000, -- ms
+  self.flush_timeout       	= conf.flush_timeout and conf.flush_timeout * 1000 or 2000,            -- ms
+  self.queue_size         	= conf.queue_size or 1000,
+  self.queue_sizeMB        	= conf.queue_size_mb * 2^20 or 20 * 2^20,  
+  self.max_sending_queue_size   = conf.max_sending_queue_size_mb * 2^20 or 200 * 2^20,  
+	
+  local ok, err = self.cur_alf:add_entry(_ngx, req_body_str, resp_body_str,conf)
   if not ok then
     log(ERR, "could not add entry to ALF: ", err)
     return ok, err

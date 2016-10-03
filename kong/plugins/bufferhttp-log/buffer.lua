@@ -262,7 +262,7 @@ function _M.new(conf)
     timer_send_pending  	= false
   }
 
-  log(WARN, "LOG BODY in new="..conf.log_bodies)
+  log(WARN, "LOG BODY in new=")
   return setmetatable(buffer, _mt)
 end
 

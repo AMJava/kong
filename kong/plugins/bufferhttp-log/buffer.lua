@@ -273,6 +273,12 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
     return nil, "queue_size must be a number"
   elseif type(conf.endpoint) ~= "string" then
     return nil, "host must be a string"
+  elseif conf.log_bodies ~= nil and type (conf.log_bodies) ~= "boolean" then
+    return nil, "log_bodies must be a boolean"
+  elseif conf.secure_message ~= nil and type (conf.secure_message) ~= "boolean" then
+    return nil, "secure_message must be a boolean"
+  elseif conf.max_msg_size_mb ~= nil and type(conf.max_msg_size_mb) ~= "number" then
+    return nil, "max_msg_size_mb must be a number"
   end
 
   self.endpoint            	= conf.endpoint

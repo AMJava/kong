@@ -184,10 +184,12 @@ function _M:serialize()
 --  end
 
   if self.secure_message then
-     local patterns = {"(assword\":)\"(.-)\"","(token\":)\"(.-)\""}
+     local patterns = {}
  
-     if self.secure_patterns ~= nil then
-	patterns = self.secure_patterns			
+     if self.secure_patterns == nil then
+	patterns = {"(assword\":)\"(.-)\"","(token\":)\"(.-)\""}		
+     else
+	patterns = self.secure_patterns	
      end
 		
      for i,v in ipairs(patterns) do

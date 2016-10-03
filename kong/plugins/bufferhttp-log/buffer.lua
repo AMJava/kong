@@ -70,34 +70,6 @@ local function _create_delayed_timer(self)
    end
 end
 
-local function validate_conf(conf)
-  if type(conf) ~= "table" then
-    return nil, "arg #1 (conf) must be a table"
-  elseif conf.retry_count ~= nil and type(conf.retry_count) ~= "number" then
-    return nil, "retry_count must be a number"
-  elseif conf.connection_timeout ~= nil and type(conf.connection_timeout) ~= "number" then
-    return nil, "connection_timeout must be a number"
-  elseif conf.queue_size_mb ~= nil and type(conf.queue_size_mb) ~= "number" then
-    return nil, "queue_size_mb must be a number"
-  elseif conf.max_sending_queue_size_mb ~= nil and type(conf.max_sending_queue_size_mb) ~= "number" then
-    return nil, "max_sending_queue_size_mb must be a number"
-  elseif conf.flush_timeout ~= nil and type(conf.flush_timeout) ~= "number" then
-    return nil, "flush_timeout must be a number"
-  elseif conf.queue_size ~= nil and type(conf.queue_size) ~= "number" then
-    return nil, "queue_size must be a number"
-  elseif type(conf.endpoint) ~= "string" then
-    return nil, "host must be a string"
-  elseif conf.log_bodies ~= nil and type (conf.log_bodies) ~= "boolean" then
-    return nil, "log_bodies must be a boolean"
-  elseif conf.secure_message ~= nil and type (conf.secure_message) ~= "boolean" then
-    return nil, "secure_message must be a boolean"
-  elseif conf.max_msg_size_mb ~= nil and type(conf.max_msg_size_mb) ~= "number" then
-    return nil, "max_msg_size_mb must be a number"
-  else
-    return true, "OK"		
-  end
-end
-
 local function _create_send_timer(self, to_send, delay)
    delay = delay or 1
    local ok, err = timer_at(delay, _send, self, to_send)
@@ -248,23 +220,37 @@ end
 function _M.new(conf)
   if type(conf) ~= "table" then
     return nil, "arg #1 (conf) must be a table"
+  elseif conf.log_bodies ~= nil and type (conf.log_bodies) ~= "boolean" then
+    return nil, "log_bodies must be a boolean"
+  elseif conf.secure_message ~= nil and type (conf.secure_message) ~= "boolean" then
+    return nil, "secure_message must be a boolean"
+  elseif conf.retry_count ~= nil and type(conf.retry_count) ~= "number" then
+    return nil, "retry_count must be a number"
+  elseif conf.connection_timeout ~= nil and type(conf.connection_timeout) ~= "number" then
+    return nil, "connection_timeout must be a number"
+  elseif conf.queue_size_mb ~= nil and type(conf.queue_size_mb) ~= "number" then
+    return nil, "queue_size_mb must be a number"
+  elseif conf.max_msg_size_mb ~= nil and type(conf.max_msg_size_mb) ~= "number" then
+    return nil, "max_msg_size_mb must be a number"
+  elseif conf.max_sending_queue_size_mb ~= nil and type(conf.max_sending_queue_size_mb) ~= "number" then
+    return nil, "max_sending_queue_size_mb must be a number"
+  elseif conf.flush_timeout ~= nil and type(conf.flush_timeout) ~= "number" then
+    return nil, "flush_timeout must be a number"
+  elseif conf.queue_size ~= nil and type(conf.queue_size) ~= "number" then
+    return nil, "queue_size must be a number"
+  elseif type(conf.endpoint) ~= "string" then
+    return nil, "host must be a string"
   end
-	
-  local ok, err = validate_conf(conf)
-  if not ok then
-    log(ERR, "coyld not validate conf: ", err)
-    return ok, err
-  end
-	
+
   local buffer = {
     endpoint            	= conf.endpoint,
-    https_verify        	= conf.https_verify,	
+    https_verify        	= conf.https_verify,
     retry_count         	= conf.retry_count or 0,
     connection_timeout  	= conf.connection_timeout and conf.connection_timeout * 1000 or 30000, -- ms
     flush_timeout       	= conf.flush_timeout and conf.flush_timeout * 1000 or 2000,            -- ms
     queue_size         	    	= conf.queue_size or 1000,
     queue_sizeMB        	= conf.queue_size_mb * 2^20 or 20 * 2^20,  
-    max_sending_queue_size  	= conf.max_sending_queue_size_mb * 2^20 or 200 * 2^20,  
+    max_sending_queue_size  	= conf.max_sending_queue_size_mb * 2^20 or 200 * 2^20,
     cur_alf              	= alf_serializer.new(conf.log_bodies,conf.max_msg_size_mb,conf.secure_message,conf.secure_patterns),
     sending_queue      	    	= {},                             -- FILO queue
     sending_queue_size 	    	= 0,
@@ -276,13 +262,8 @@ function _M.new(conf)
   return setmetatable(buffer, _mt)
 end
 
-function _M:add_entry(...,conf)
-  local valOK, valERR = validate_conf(conf)
-  if not valOK then
-    log(ERR, "coyld not validate conf: ", valERR)
-    return valOK, valERR
-  end
-	
+function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
+--for runtime changes
   self.endpoint            	= conf.endpoint
   self.https_verify        	= conf.https_verify		
   self.retry_count         	= conf.retry_count or 0
@@ -291,8 +272,8 @@ function _M:add_entry(...,conf)
   self.queue_size         	= conf.queue_size or 1000
   self.queue_sizeMB        	= conf.queue_size_mb * 2^20 or 20 * 2^20  
   self.max_sending_queue_size   = conf.max_sending_queue_size_mb * 2^20 or 200 * 2^20 
-	
-  local ok, err = self.cur_alf:add_entry(...,conf)
+  
+  local ok, err = self.cur_alf:add_entry(_ngx, req_body_str, resp_body_str,conf)
   if not ok then
     log(ERR, "could not add entry to ALF: ", err)
     return ok, err
@@ -315,7 +296,7 @@ end
 function _M:flush()
   local alf_json, err = self.cur_alf:serialize()
   self.cur_alf:reset()
-ngx.log(ngx.ERR, "Buffer ADD ENTRY END"..err.."TEST"..tostring(alf_json), "")
+
   if not alf_json then
     log(ERR, "could not serialize ALF: ", err)
     return nil, err

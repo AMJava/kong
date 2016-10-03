@@ -202,7 +202,7 @@ function _M:serialize()
      end
 
      for i,v in ipairs(patterns2) do
-        json = gsub(json, v, "%1\\\"*******\\\"")
+        json = gsub(json, gsub(v, "\"", "\\\""), "%1\\\"*******\\\"")
      end
   end
 	

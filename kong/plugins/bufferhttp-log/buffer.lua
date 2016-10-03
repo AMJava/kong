@@ -224,6 +224,8 @@ function _M.new(conf)
     return nil, "log_bodies must be a boolean"
   elseif conf.secure_message ~= nil and type (conf.secure_message) ~= "boolean" then
     return nil, "secure_message must be a boolean"
+  elseif type(conf.secure_patterns) ~= "table" and type(conf.secure_patterns) ~= "array" then
+    return nil, "secure_patterns must be an array"
   elseif conf.retry_count ~= nil and type(conf.retry_count) ~= "number" then
     return nil, "retry_count must be a number"
   elseif conf.connection_timeout ~= nil and type(conf.connection_timeout) ~= "number" then
@@ -246,6 +248,7 @@ function _M.new(conf)
     endpoint            	= conf.endpoint,
     https_verify        	= conf.https_verify,
     secure_message          	= conf.secure_message or false,
+    secure_patterns          	= conf.secure_patterns,
     log_bodies          	= conf.log_bodies or false,		
     retry_count         	= conf.retry_count or 0,
     connection_timeout  	= conf.connection_timeout and conf.connection_timeout * 1000 or 30000, -- ms

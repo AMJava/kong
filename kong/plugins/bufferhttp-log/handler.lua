@@ -21,7 +21,6 @@ function BufferHTTPHandler:access(conf)
   BufferHTTPHandler.super.access(self)
 
   if conf.log_bodies then
-    ngx.log(ngx.ERR, "LOG BODIES = Y", err)
     read_body()
     ngx.ctx.bufferhttp = {req_body = get_body_data()}
   end

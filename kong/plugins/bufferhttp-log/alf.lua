@@ -187,7 +187,7 @@ function _M:serialize()
      local patterns = {"(assword\":)\"(.-)\"","(token\":)\"(.-)\""}
  
      if self.secure_patterns ~= nil then
-	patterns = table.concat(self.secure_patterns, ",")			
+	patterns = self.secure_patterns			
      end
 		
      for i,v in ipairs(patterns) do

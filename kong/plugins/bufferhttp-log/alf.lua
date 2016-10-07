@@ -141,7 +141,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   request_headers["http_content_type"]= resp_content_type
   request_headers["http_character_enc"]= resp_transfer_encoding
   request_headers["source"]= "KONG_API"
-  request_headers["name"]= "http"
+  request_headers["event_name"]= "http"
   request_headers["is_error"]= "false"
   request_headers["from_internet"]= "false"
 	

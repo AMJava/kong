@@ -21,6 +21,7 @@ local resp_get_headers = ngx.resp.get_headers
 local req_start_time = ngx.req.start_time
 local req_get_method = ngx.req.get_method
 local req_get_headers = ngx.req.get_headers
+local req_set_header = ngx.req.set_header
 local req_get_uri_args = ngx.req.get_uri_args
 local req_raw_header = ngx.req.raw_header
 local setmetatable = setmetatable
@@ -130,30 +131,33 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   
   local idx = #self.entries + 1
   local now = timestamp.get_utc()
-	
+
+  --req_set_header("http_method", req_get_method())
+  --req_set_header("http_method", req_get_method()) 
+  --req_set_header("http_path", request_path)
+  --req_set_header("http_remote_add", ngx.var.remote_addr)
+  --req_set_header("http_content_type", request_content_type)
+  --req_set_header("http_status_code", ""..ngx.status)
+  --req_set_header("http_content_type", resp_content_type)
+ -- req_set_header("http_character_enc", resp_transfer_encoding)
+  --req_set_header("source", "KONG_API")
+ -- req_set_header("name", "http")
+ -- req_set_header("is_error", "false")
+ -- req_set_header("from_internet", "false")
+    table.insert(request_headers,{tet = "1"})
+  
   self.entries[idx] = {
-    source = "debessmana",
+    source = "KONG_API",
     timestamp = now,
     id = uuid(),
-    name = "KONG_API",
+    name = "http",
     headers = request_headers,
     payload = {
     request = {
-	  metadata = {
-      http_method = req_get_method(),
-      http_path = request_path,	
-      http_remote_add = ngx.var.remote_addr,
-	  http_content_type = request_content_type,
-	  },
     body = post_data,
     headers = request_headers
     },
     response = {
-	  metadata = {
-      http_statuc_code = ""..ngx.status,
-      http_content_type = resp_content_type,
-      http_character_enc = resp_transfer_encoding
-	  },
     body = response_content,
     headers = resp_headers
     }},

@@ -130,8 +130,13 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   local request_path = ctx.api.request_path
   
   local idx = #self.entries + 1
+  local isError = "false"
   local now = timestamp.get_utc()
 
+  if ngx.status >= 400 then
+    isError = 'true'	
+  end
+	
   request_headers["dm_http_method"]= req_get_method()
   request_headers["dm_http_method"]= req_get_method()
   request_headers["dm_http_path"]= request_path
@@ -142,7 +147,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   request_headers["dm_http_character_enc"]= resp_transfer_encoding
   request_headers["dm_source"]= "KONG_API"
   request_headers["event_name"]= "http"
-  request_headers["dm_is_error"]= "false"
+  request_headers["dm_is_error"]= isError
   request_headers["dm_from_internet"]= "false"
 	
   self.entries[idx] = {

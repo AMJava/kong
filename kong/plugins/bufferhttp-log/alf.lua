@@ -144,7 +144,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
  -- req_set_header("name", "http")
  -- req_set_header("is_error", "false")
  -- req_set_header("from_internet", "false")
-    table.insert(request_headers,{tet = "1"})
+ --   table.insert(request_headers,{tet = "1"})
   
   self.entries[idx] = {
     source = "KONG_API",
@@ -154,10 +154,21 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
     headers = request_headers,
     payload = {
     request = {
+	  metadata = {
+      http_method = req_get_method(),
+      http_path = request_path,	
+      http_remote_add = ngx.var.remote_addr,
+	  http_content_type = request_content_type,
+	  },
     body = post_data,
     headers = request_headers
     },
     response = {
+	  metadata = {
+      http_status_code = ""..ngx.status,
+      http_content_type = resp_content_type,
+      http_character_enc = resp_transfer_encoding
+	  },
     body = response_content,
     headers = resp_headers
     }},

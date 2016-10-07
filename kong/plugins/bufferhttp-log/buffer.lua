@@ -304,7 +304,7 @@ function _M:flush()
     log(WARN, "sending queue is full, discarding this ALF")
     return nil, "buffer full"
   end
-
+  log(ERR, "Error "..tostring(alf_json)..": ", "")	
   log(DEBUG, "flushing ALF for sending (", err, " entries)")
 
   self.sending_queue_size = self.sending_queue_size + #alf_json

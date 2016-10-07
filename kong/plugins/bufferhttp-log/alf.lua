@@ -132,20 +132,18 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   local idx = #self.entries + 1
   local now = timestamp.get_utc()
 
-  --req_set_header("http_method", req_get_method())
-  --req_set_header("http_method", req_get_method()) 
-  --req_set_header("http_path", request_path)
-  --req_set_header("http_remote_add", ngx.var.remote_addr)
-  --req_set_header("http_content_type", request_content_type)
-  --req_set_header("http_status_code", ""..ngx.status)
-  --req_set_header("http_content_type", resp_content_type)
- -- req_set_header("http_character_enc", resp_transfer_encoding)
-  --req_set_header("source", "KONG_API")
- -- req_set_header("name", "http")
- -- req_set_header("is_error", "false")
- -- req_set_header("from_internet", "false")
- --   table.insert(request_headers, tet = "1")
-  request_headers["aaa"] = "123"
+  request_headers["http_method"]= req_get_method()
+  request_headers["http_method"]= req_get_method()
+  request_headers["http_path"]= request_path
+  request_headers["http_remote_add"]= ngx.var.remote_addr
+  request_headers["http_content_type"]= request_content_type
+  request_headers["http_status_code"]= ""..ngx.status
+  request_headers["http_content_type"]= resp_content_type
+  request_headers["http_character_enc"]= resp_transfer_encoding
+  request_headers["source"]= "KONG_API"
+  request_headers["name"]= "http"
+  request_headers["is_error"]= "false"
+  request_headers["from_internet"]= "false"
 	
   self.entries[idx] = {
     source = "KONG_API",
@@ -162,7 +160,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
 	  http_content_type = request_content_type,
 	  },
     body = post_data,
-    headers = request_headers
+    headers = req_get_headers()
     },
     response = {
 	  metadata = {

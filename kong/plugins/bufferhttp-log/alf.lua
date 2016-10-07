@@ -144,7 +144,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
  -- req_set_header("name", "http")
  -- req_set_header("is_error", "false")
  -- req_set_header("from_internet", "false")
- --   table.insert(request_headers,{tet = "1"})
+    table.insert(request_headers, tet = "1")
   
   self.entries[idx] = {
     source = "KONG_API",

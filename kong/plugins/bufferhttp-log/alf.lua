@@ -132,18 +132,18 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   local idx = #self.entries + 1
   local now = timestamp.get_utc()
 
-  request_headers["http_method"]= req_get_method()
-  request_headers["http_method"]= req_get_method()
-  request_headers["http_path"]= request_path
-  request_headers["http_remote_add"]= ngx.var.remote_addr
-  request_headers["http_content_type"]= request_content_type
-  request_headers["http_status_code"]= ""..ngx.status
-  request_headers["http_content_type"]= resp_content_type
-  request_headers["http_character_enc"]= resp_transfer_encoding
-  request_headers["source"]= "KONG_API"
+  request_headers["dm_http_method"]= req_get_method()
+  request_headers["dm_http_method"]= req_get_method()
+  request_headers["dm_http_path"]= request_path
+  request_headers["dm_http_remote_addr"]= ngx.var.remote_addr
+  request_headers["dm_http_content_type"]= request_content_type
+  request_headers["dm_http_status_code"]= ""..ngx.status
+  request_headers["dm_http_content_type"]= resp_content_type
+  request_headers["dm_http_character_enc"]= resp_transfer_encoding
+  request_headers["dm_source"]= "KONG_API"
   request_headers["event_name"]= "http"
-  request_headers["is_error"]= "false"
-  request_headers["from_internet"]= "false"
+  request_headers["dm_is_error"]= "false"
+  request_headers["dm_from_internet"]= "false"
 	
   self.entries[idx] = {
     source = "KONG_API",

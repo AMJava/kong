@@ -13,7 +13,7 @@ end
 function BCustomBlocker:access(conf)
   CustomBlocker.super.access(self)
   
-  if conf.blacklist then
+  if conf.block_entry then
     responses.send_HTTP_FORBIDDEN("This service is not available right now")
   end
 

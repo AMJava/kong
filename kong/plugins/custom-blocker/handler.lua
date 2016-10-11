@@ -10,7 +10,7 @@ function CustomBlocker:new()
   CustomBlocker.super.new(self, "custom-blocker")
 end
 
-function BCustomBlocker:access(conf)
+function CustomBlocker:access(conf)
   CustomBlocker.super.access(self)
   
   if conf.block_entry then

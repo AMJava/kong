@@ -1,4 +1,5 @@
 local BasePlugin = require "kong.plugins.base_plugin"
+local responses = require "kong.tools.responses"
 
 --Extend Base Plugin
 local CustomBlocker = BasePlugin:extend()

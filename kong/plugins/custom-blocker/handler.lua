@@ -5,7 +5,7 @@ local responses = require "kong.tools.responses"
 local CustomBlocker = BasePlugin:extend()
 
 --Set Priority
-CustomBlocker.PRIORITY = 1001
+CustomBlocker.PRIORITY = 1
 
 function CustomBlocker:new()
   CustomBlocker.super.new(self, "custom-blocker")

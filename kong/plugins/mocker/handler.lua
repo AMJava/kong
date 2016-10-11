@@ -14,7 +14,7 @@ end
 function Mocker:access(conf)
   Mocker.super.access(self)
   
-  local errorCode = 418
+  local errorCode = 404
   local errorMessage = "This service is not available right now"
   
   if conf.mock_response then
@@ -26,7 +26,7 @@ function Mocker:access(conf)
         errorMessage = conf.error_message
     end
     
-    responses.send(404, "Test")
+    responses.send(errorCode, "Test")
   end
 
 end

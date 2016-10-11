@@ -14,8 +14,19 @@ end
 function Mocker:access(conf)
   Mocker.super.access(self)
   
-  if conf.block_entry then
-    responses.send_HTTP_FORBIDDEN("This service is not available right now")
+  local errorCode = 418
+  local errorMessage = "This service is not available right now"
+  
+  if conf.mock_response then
+    if conf.error_code and type(conf.error_code) ~= "number" then
+        errorCode = conf.error_code
+    end
+    
+    if conf.error_message and type(conf.error_message) ~= "string" then
+        errorMessage = conf.error_message
+    end
+    
+    responses.send(error_code, errorMessage)
   end
 
 end

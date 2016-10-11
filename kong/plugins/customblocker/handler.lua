@@ -1,38 +1,32 @@
--- Buffers request/response bodies if asked so in the plugin's config.
--- Caches the server's address to avoid further syscalls.
---
--- Maintains one ALF Buffer per bufferhttp plugin per worker.
-
 local BasePlugin = require "kong.plugins.base_plugin"
-local Buffer = require "kong.plugins.bufferhttp-log.buffer"
 
-local read_body = ngx.req.read_body
-local get_body_data = ngx.req.get_body_data
-local req_set_header = ngx.req.set_header
-local req_get_headers = ngx.req.get_headers
-local uuid = require("kong.tools.utils").uuid
+--Extend Base Plugin
+local CustomBlocker = BasePlugin:extend()
 
-local _alf_buffers = {} -- buffers per-api
+--Set Priority
+CustomBlocker.PRIORITY = 1001
 
-local BufferHTTPHandler = BasePlugin:extend()
-
-function BufferHTTPHandler:new()
-  BufferHTTPHandler.super.new(self, "bufferhttp-log")
+function CustomBlocker:new()
+  CustomBlocker.super.new(self, "customblocker")
 end
 
-function BufferHTTPHandler:access(conf)
-  BufferHTTPHandler.super.access(self)
-
-end
-
-function BufferHTTPHandler:body_filter(conf)
-  BufferHTTPHandler.super.body_filter(self)
+function BCustomBlocker:access(conf)
+  CustomBlocker.super.access(self)
+  
+  if conf.blacklist then
+    responses.send_HTTP_FORBIDDEN("This service is not available right now")
+  end
 
 end
 
-function BufferHTTPHandler:log(conf)
-  BufferHTTPHandler.super.log(self)
+function CustomBlocker:body_filter(conf)
+  CustomBlocker.super.body_filter(self)
 
 end
 
-return BufferHTTPHandler
+function CustomBlocker:log(conf)
+  CustomBlocker.super.log(self)
+
+end
+
+return CustomBlocker

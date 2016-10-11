@@ -18,17 +18,15 @@ function Mocker:access(conf)
   local errorMessage = "This service is not available right now"
   local headers = {}
   
-  if conf.mock_response then
-    if conf.error_code and type(conf.error_code) == "number" then
-        errorCode = conf.error_code
-    end
-    
-    if conf.error_message and type(conf.error_message) == "string" then
-        errorMessage = conf.error_message
-    end
-    
-    responses.send(errorCode, errorMessage)
+  if conf.error_code and type(conf.error_code) == "number" then
+      errorCode = conf.error_code
   end
+
+  if conf.error_message and type(conf.error_message) == "string" then
+      errorMessage = conf.error_message
+  end
+
+  responses.send(errorCode, errorMessage)
 
 end
 

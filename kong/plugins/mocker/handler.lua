@@ -3,6 +3,7 @@ local responses = require "kong.tools.responses"
 
 local cjson = require "cjson"
 local meta = require "kong.meta"
+local req_get_uri_args = ngx.req.get_uri_args
 
 --local server_header = _KONG._NAME.."/".._KONG._VERSION
 local server_header = meta._NAME.."/"..meta._VERSION
@@ -46,19 +47,43 @@ function Mocker:access(conf)
   local errorCode = 403
   local errorMessage = "This service is not available right now"
   local contentTypeJson = true
+  local queryValueMAP = {}
     
-  if conf.error_code and type(conf.error_code) == "number" then
-      errorCode = conf.error_code
-  end
+  if conf.use_query_params and type(conf.use_query_params) == "boolean" then
 
-  if type(conf.content_type_json) == "boolean" then
-      contentTypeJson = conf.content_type_json
+    local querystring = req_get_uri_args()
+    local querystringValue = querystring["mock"]
+    local mockValue = {}
+    
+    if querystringValue then
+        if self.query_param_mapping == nil then
+            queryValueMAP = {['mock1']={['code']={404},['message']={'{Service is Not Available}'}},['mock2']={['code']={403},['message']={'{<html><h1>Service is Not Available</h1></html>}'}}}
+        else
+            queryValueMAP = self.query_param_mapping	
+        end
+        
+        mockValue = queryValueMAP[querystringValue]
+        if mockValue then
+          local code = mockValue["code"]
+          local message = mockValue["message"]
+        end
+    end
+ 
+        
+  else
+      if conf.error_code and type(conf.error_code) == "number" then
+          errorCode = conf.error_code
+      end
+
+      if type(conf.content_type_json) == "boolean" then
+          contentTypeJson = conf.content_type_json
+      end
+
+      if conf.error_message and type(conf.error_message) == "string" then
+          errorMessage = conf.error_message
+      end
   end
     
-  if conf.error_message and type(conf.error_message) == "string" then
-      errorMessage = conf.error_message
-  end
-
   send_response(errorCode, errorMessage,contentTypeJson)
 
 end

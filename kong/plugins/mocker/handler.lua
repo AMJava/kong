@@ -56,7 +56,7 @@ function Mocker:access(conf)
     local queryValueMAP = {}   
         
     if querystringValue then
-        if self.query_param_mapping == nil then
+        if conf.query_param_mapping == nil then
             queryValueMAP = {['mock1']={['code']=404,['contentType']='application/json; charset=utf-8',['message']='{\"message\":\"Service is Not Available\"}'},['mock2']={['code']=403,['contentType']='text/html; charset=UTF-8',['message']='<html><h1>Service is Not Available</h1></html>'}}
         else
             queryValueMAP = loadstring("return "..conf.query_param_mapping)()

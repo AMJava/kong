@@ -4,8 +4,6 @@ local responses = require "kong.tools.responses"
 local cjson = require "cjson"
 local meta = require "kong.meta"
 local req_get_uri_args = ngx.req.get_uri_args
-local ERR = ngx.ERR
-local ngx_log = ngx.log
 
 --local server_header = _KONG._NAME.."/".._KONG._VERSION
 local server_header = meta._NAME.."/"..meta._VERSION
@@ -58,7 +56,7 @@ function Mocker:access(conf)
     local queryValueMAP = {}   
         
     if querystringValue then
-        if conf.query_param_mapping == nil then
+        if self.query_param_mapping == nil then
             queryValueMAP = {['mock1']={['code']=404,['contentType']='application/json; charset=utf-8',['message']='{\"message\":\"Service is Not Available\"}'},['mock2']={['code']=403,['contentType']='text/html; charset=UTF-8',['message']='<html><h1>Service is Not Available</h1></html>'}}
         else
             queryValueMAP = loadstring("return "..conf.query_param_mapping)()

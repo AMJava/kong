@@ -51,20 +51,23 @@ function Mocker:access(conf)
   local queryValueMAP = {}
     
   if conf.use_query_params and type(conf.use_query_params) == "boolean" then
-    log(ERR, "In query param ", "")
+    ngx_log(ERR, "In query param ", "")
     local querystring = req_get_uri_args()
     local querystringValue = querystring["mock"]
     local mockValue = {}
     
     if querystringValue then
+        ngx_log(ERR, "In query param 2", "")
         if self.query_param_mapping == nil then
             queryValueMAP = {['mock1']={['code']={404},['message']={'{Service is Not Available}'}},['mock2']={['code']={403},['message']={'{<html><h1>Service is Not Available</h1></html>}'}}}
         else
+            ngx_log(ERR, "In query param 3", "")
             queryValueMAP = self.query_param_mapping	
         end
         
         mockValue = queryValueMAP[querystringValue]
         if mockValue then
+          ngx_log(ERR, "In query param 4", "")
           local code = mockValue["code"]
           local message = mockValue["message"]
         end

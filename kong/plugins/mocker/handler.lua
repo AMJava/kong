@@ -26,7 +26,7 @@ function Mocker:access(conf)
       errorMessage = conf.error_message
   end
 
-  responses.send(errorCode, errorMessage)
+  responses.send(errorCode, errorMessage,true)
 
 end
 

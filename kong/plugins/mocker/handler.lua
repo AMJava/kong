@@ -13,21 +13,24 @@ local Mocker = BasePlugin:extend()
 --Set Priority
 Mocker.PRIORITY = 1
 
-local function send_response(status_code,content, headers)
+local function send_response(status_code,content, contentTypeJson)
     ngx.status = status_code
-    ngx.header["Content-Type"] = "application/json; charset=utf-8"
+    if contentTypeJson then
+     ngx.header["Content-Type"] = "application/json; charset=utf-8"
+    else
+    ngx.header["Content-Type"] = "text/html; charset=UTF-8"    
+    end
+    
     ngx.header["Server"] = server_header
   
-    if headers then
-      for k, v in pairs(headers) do
-        ngx.header[k] = v
-      end
-    end
-
-    if type(content) == "table" then
-      ngx.say(cjson.encode(content))
-    elseif content then
-      ngx.say(cjson.encode {message = content})
+    if contentTypeJson then
+        if type(content) == "table" then
+          ngx.say(cjson.encode(content))
+        elseif content then
+          ngx.say(cjson.encode {message = content})
+        end
+    else
+        ngx.say(content)
     end
 
     return ngx.exit(status_code)
@@ -42,18 +45,21 @@ function Mocker:access(conf)
   
   local errorCode = 403
   local errorMessage = "This service is not available right now"
-  local headers = {}
-  headers["Content-Type"]= "text/html; charset=UTF-8"
-  
+  local contentTypeJson = true
+    
   if conf.error_code and type(conf.error_code) == "number" then
       errorCode = conf.error_code
   end
 
+  if conf.content_type_json and type(conf.content_type_json) == "boolean" then
+      contentTypeJson = conf.content_type_json
+  end
+    
   if conf.error_message and type(conf.error_message) == "string" then
       errorMessage = conf.error_message
   end
 
-  send_response(errorCode, errorMessage,headers)
+  send_response(errorCode, errorMessage,contentTypeJson)
 
 end
 

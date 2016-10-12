@@ -69,9 +69,9 @@ function Mocker:access(conf)
         mockValue = queryValueMAP[querystringValue]
         if mockValue then
           errorCode = mockValue["code"]
-          local message = mockValue["message"]
+          errorMessage = mockValue["message"]
            ngx_log(ERR, "In query param 4"..errorCode, "")
-           ngx_log(ERR, "In query param 4"..message, "")
+           ngx_log(ERR, "In query param 4"..errorMessage, "")
         end
     end
  

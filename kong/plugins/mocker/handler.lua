@@ -18,7 +18,7 @@ Mocker.PRIORITY = 1
 
 local function send_response(status_code,content, contentTypeJson)
     ngx.status = status_code
-    if contentTypeJson then
+    if contentTypeJson == "application/json; charset=utf-8" then
      ngx.header["Content-Type"] = "application/json; charset=utf-8"
     else
     ngx.header["Content-Type"] = "text/html; charset=UTF-8"    
@@ -26,7 +26,7 @@ local function send_response(status_code,content, contentTypeJson)
     
     ngx.header["Server"] = server_header
   
-    if contentTypeJson then
+    if contentTypeJson == "application/json; charset=utf-8" then
         if type(content) == "table" then
           ngx.say(cjson.encode(content))
         elseif content then
@@ -48,30 +48,36 @@ function Mocker:access(conf)
   
   local errorCode = 403
   local errorMessage = "This service is not available right now"
-  local contentTypeJson = true
+  local contentType = "application/json; charset=utf-8"
   local queryValueMAP = {}
     
   if conf.use_query_params and type(conf.use_query_params) == "boolean" then
-    ngx_log(ERR, "In query param ", "")
     local querystring = req_get_uri_args()
     local querystringValue = querystring["mock"]
     local mockValue = {}
     
     if querystringValue then
-        ngx_log(ERR, "In query param 2", "")
         if conf.query_param_mapping == nil then
-            queryValueMAP = {['mock1']={['code']=404,['message']='{\"message\":\"Service is Not Available\"}'},['mock2']={['code']=403,['message']='<html><h1>Service is Not Available</h1></html>'}}
+            queryValueMAP = {['mock1']={['code']=404,['contentType']='application/json; charset=utf-8',['message']='{\"message\":\"Service is Not Available\"}'},['mock2']={['code']=403,['contentType']='text/html; charset=UTF-8',['message']='<html><h1>Service is Not Available</h1></html>'}}
         else
-            ngx_log(ERR, "In query param 3", "")
             queryValueMAP = loadstring("return "..conf.query_param_mapping)()
         end
         
         mockValue = queryValueMAP[querystringValue]
         if mockValue then
-          errorCode = mockValue["code"]
-          errorMessage = mockValue["message"]
-           ngx_log(ERR, "In query param 4"..errorCode, "")
-           ngx_log(ERR, "In query param 4"..errorMessage, "")
+          if mockValue["code"] then
+            errorCode = mockValue["code"]
+          end
+          if mockValue["message"] then
+            errorMessage = mockValue["message"]
+          end
+           if mockValue["contentType"] then
+            contentType = mockValue["contentType"]
+          end
+
+          ngx_log(ERR, "In query param 4"..errorCode, "")
+          ngx_log(ERR, "In query param 4"..errorMessage, "")
+          ngx_log(ERR, "In query param 4"..contentType, "")
         end
     end
  
@@ -81,8 +87,8 @@ function Mocker:access(conf)
           errorCode = conf.error_code
       end
 
-      if type(conf.content_type_json) == "boolean" then
-          contentTypeJson = conf.content_type_json
+      if type(conf.content_type_json) == "boolean" and conf.content_type_json == false then
+          contentType = "text/html; charset=UTF-8"
       end
 
       if conf.error_message and type(conf.error_message) == "string" then
@@ -90,7 +96,7 @@ function Mocker:access(conf)
       end
   end
     
-  send_response(errorCode, errorMessage,contentTypeJson)
+  send_response(errorCode, errorMessage,contentType)
 
 end
 

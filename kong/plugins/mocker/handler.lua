@@ -16,7 +16,7 @@ local Mocker = BasePlugin:extend()
 --Set Priority
 Mocker.PRIORITY = 1
 
-local function send_response(status_code,content, contentTypeJson)
+local function send_response(status_code,content, contentTypeJson,transformMessage)
     ngx.status = status_code
     if contentTypeJson == "application/json; charset=utf-8" then
      ngx.header["Content-Type"] = "application/json; charset=utf-8"
@@ -26,7 +26,7 @@ local function send_response(status_code,content, contentTypeJson)
     
     ngx.header["Server"] = server_header
   
-    if contentTypeJson == "application/json; charset=utf-8" then
+    if contentTypeJson == "application/json; charset=utf-8" and transformMessage then
         if type(content) == "table" then
           ngx.say(cjson.encode(content))
         elseif content then
@@ -49,13 +49,14 @@ function Mocker:access(conf)
   local errorCode = 403
   local errorMessage = "This service is not available right now"
   local contentType = "application/json; charset=utf-8"
-  local queryValueMAP = {}
+  local transformMessage = true
     
   if conf.use_query_params and type(conf.use_query_params) == "boolean" then
     local querystring = req_get_uri_args()
     local querystringValue = querystring["mock"]
     local mockValue = {}
-    
+    local queryValueMAP = {}   
+        
     if querystringValue then
         if conf.query_param_mapping == nil then
             queryValueMAP = {['mock1']={['code']=404,['contentType']='application/json; charset=utf-8',['message']='{\"message\":\"Service is Not Available\"}'},['mock2']={['code']=403,['contentType']='text/html; charset=UTF-8',['message']='<html><h1>Service is Not Available</h1></html>'}}
@@ -69,15 +70,12 @@ function Mocker:access(conf)
             errorCode = mockValue["code"]
           end
           if mockValue["message"] then
+            transformMessage = false
             errorMessage = mockValue["message"]
           end
            if mockValue["contentType"] then
             contentType = mockValue["contentType"]
           end
-
-          ngx_log(ERR, "In query param 4"..errorCode, "")
-          ngx_log(ERR, "In query param 4"..errorMessage, "")
-          ngx_log(ERR, "In query param 4"..contentType, "")
         end
     end
  
@@ -96,7 +94,7 @@ function Mocker:access(conf)
       end
   end
     
-  send_response(errorCode, errorMessage,contentType)
+  send_response(errorCode, errorMessage,contentType,transformMessage)
 
 end
 

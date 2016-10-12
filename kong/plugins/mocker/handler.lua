@@ -16,7 +16,7 @@ function Mocker:access(conf)
   
   local errorCode = 403
   local errorMessage = "This service is not available right now"
-  local headers = {}
+  local headers = {"Content-Type" = "application/json; charset=utf-8"}
   
   if conf.error_code and type(conf.error_code) == "number" then
       errorCode = conf.error_code
@@ -26,7 +26,7 @@ function Mocker:access(conf)
       errorMessage = conf.error_message
   end
 
-  responses.send(errorCode, errorMessage,true)
+  responses.send(errorCode, errorMessage,headers)
 
 end
 

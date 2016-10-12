@@ -60,7 +60,7 @@ function Mocker:access(conf)
     if querystringValue then
         ngx_log(ERR, "In query param 2", "")
         if conf.query_param_mapping == nil then
-            queryValueMAP = {['mock1']={['code']={404},['message']={'{Service is Not Available}'}},['mock2']={['code']={403},['message']={'{<html><h1>Service is Not Available</h1></html>}'}}}
+            queryValueMAP = {['mock1']={['code']=404,['message']='{\"message\":\"Service is Not Available\"}'},['mock2']={['code']=403,['message']='<html><h1>Service is Not Available</h1></html>'}}
         else
             ngx_log(ERR, "In query param 3", "")
             queryValueMAP = loadstring("return "..conf.query_param_mapping)()
@@ -68,9 +68,10 @@ function Mocker:access(conf)
         
         mockValue = queryValueMAP[querystringValue]
         if mockValue then
-          local code = mockValue["code"]
+          errorCode = mockValue["code"]
           local message = mockValue["message"]
-           ngx_log(ERR, "In query param 4"..code, "")
+           ngx_log(ERR, "In query param 4"..errorCode, "")
+           ngx_log(ERR, "In query param 4"..message, "")
         end
     end
  

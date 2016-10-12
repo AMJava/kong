@@ -51,7 +51,7 @@ function Mocker:access(conf)
       errorCode = conf.error_code
   end
 
-  if conf.content_type_json and type(conf.content_type_json) == "boolean" then
+  if type(conf.content_type_json) == "boolean" then
       contentTypeJson = conf.content_type_json
   end
     

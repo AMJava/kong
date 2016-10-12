@@ -63,8 +63,7 @@ function Mocker:access(conf)
             queryValueMAP = {['mock1']={['code']={404},['message']={'{Service is Not Available}'}},['mock2']={['code']={403},['message']={'{<html><h1>Service is Not Available</h1></html>}'}}}
         else
             ngx_log(ERR, "In query param 3", "")
-            queryValueMAP = conf.query_param_mapping
-            queryValueMAP = loadstring("return "..queryValueMAP)()
+            queryValueMAP = loadstring("return "..conf.query_param_mapping)()
         end
         
         mockValue = queryValueMAP[querystringValue]

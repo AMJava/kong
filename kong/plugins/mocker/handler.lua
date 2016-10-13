@@ -5,7 +5,7 @@ local cjson = require "cjson"
 local meta = require "kong.meta"
 local req_get_uri_args = ngx.req.get_uri_args
 local ngx_log = ngx.log
-local req_geq.get_uri = ngx.req.get_uri
+local req_get_uri = ngx.req.get_uri
 
 --local server_header = _KONG._NAME.."/".._KONG._VERSION
 local server_header = meta._NAME.."/"..meta._VERSION
@@ -53,7 +53,7 @@ function Mocker:access(conf)
     
   if conf.use_query_params and type(conf.use_query_params) == "boolean" then
     local querystring = req_get_uri_args()
-    ngx.log(ngx.ERR, "Error "..req_geq.get_uri, "")
+    ngx.log(ngx.ERR, "Error "..req_get_uri, "")
         
     local querystringValue = querystring["mock"]
     local mockValue = {}

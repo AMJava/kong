@@ -67,6 +67,7 @@ function Mocker:access(conf)
     if conf.mock_name_mapping == nil then
         queryNameMAP = {['mock1']={['query_param_mappings']={['param1']='1',['param2']='1'},['request_path_mappings']='/customer'},['mock2']={['query_param_mappings']={['param1']='2',['param2']='2'},['request_path_mappings']='/product'}}
     else
+		ngx.log(ngx.ERR, "TEST 0 ", "")
         queryNameMAP = loadstring("return "..conf.mock_name_mapping)()
     end
     if conf.mock_value_mapping == nil then
@@ -111,8 +112,6 @@ function Mocker:access(conf)
 											if loopHelper == false then
 												ngx.log(ngx.ERR, "TEST 10 NOT FOUND","")
 											end
-										else
-											break
 										end
 										if loopHelper == true then
 											ngx.log(ngx.ERR, "TEST 10 SUCCESS","")

@@ -96,7 +96,7 @@ function Mocker:access(conf)
                                         isMatched = false
                                         for finalKey, finalValue in pairs(queryMapStructure) do
                                             ngx.log(ngx.ERR, "TEST 8 ", "")
-                                            if type(finalValue) != "table" then
+                                            if type(finalValue) ~= "table" then
                                                 ngx.log(ngx.ERR, "TEST 9 ","")
                                                 if finalKey == queryName and finalValue == queryName then
                                                     isMatched == true

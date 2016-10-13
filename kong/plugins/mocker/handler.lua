@@ -54,7 +54,6 @@ function Mocker:access(conf)
     local queryParams = req_get_uri_args()
     local url = ngx.ctx.upstream_url
         
-    local querystringValue = true
     local mockValue = {}
     local queryNameMAP = {} 
     local queryValueMAP = {}
@@ -63,65 +62,61 @@ function Mocker:access(conf)
     local mockName = ""
     local finalMapStructure = {}
         
-    if querystringValue then
-        if conf.mock_name_mapping == nil then
-            queryNameMAP = {['mock1']={['query_param_mappings']={['param1']='1',['param2']='1'},['request_path_mappings']='/customer'},['mock2']={['query_param_mappings']={['param1']='2',['param2']='2'},['request_path_mappings']='/product'}}
-        else
-            queryNameMAP = loadstring("return "..conf.mock_name_mapping)()
-        end
-        if conf.mock_value_mapping == nil then
-            queryValueMAP = {['mock1']={['code']=404,['contentType']='application/json; charset=utf-8',['message']='{\"message\":\"Default Mock JSON Message\"}'},['mock2']={['code']=403,['contentType']='text/html; charset=UTF-8',['message']='<html><h1>Default Mock HTML Message</h1></html>'}}
-        else
-            queryValueMAP = loadstring("return "..conf.mock_value_mapping)()
-        end
-
-        if queryParams ~= nil then
-            ngx.log(ngx.ERR, "TEST 1 ", "")
-             for key, val in pairs(queryParams) do
-                    ngx.log(ngx.ERR, "TEST 2 ", "")
-                 if type(val) ~= "table" then
-                     ngx.log(ngx.ERR, "TEST 3 "..key..":"..val,"")
-                     queryName = key
-                     queryValue = val 
-                     for keyMAP, valMAP in pairs(queryNameMAP) do
-                        ngx.log(ngx.ERR, "TEST 4 ", "")
-                        if type(valMAP) == "table" then
-                            ngx.log(ngx.ERR, "TEST 5 ","")
-                            mockName = keyMAP
-                             for keyMAP1, valMAP1 in pairs(valMAP) do
-                                ngx.log(ngx.ERR, "TEST 6 ", "")
-                                if type(valMAP1) == "table" and keyMAP1 == "query_param_mappings" then
-                                    ngx.log(ngx.ERR, "TEST 7 ","")
-                                    finalMapStructure = valMAP1
-                                    if finalMapStructure[queryName] == queryValue then
-                                        ngx.log(ngx.ERR, "TEST 8 ","")
-                                    end
-                                end
-                             end
-                        end
-                     end
-                 end
-             end           
-        end
-        
-        
-        
-        mockValue = queryValueMAP[querystringValue]
-        if mockValue then
-          if mockValue["code"] then
-            errorCode = mockValue["code"]
-          end
-          if mockValue["message"] then
-            transformMessage = false
-            errorMessage = mockValue["message"]
-          end
-           if mockValue["contentType"] then
-            contentType = mockValue["contentType"]
-          end
-        end
+    if conf.mock_name_mapping == nil then
+        queryNameMAP = {['mock1']={['query_param_mappings']={['param1']='1',['param2']='1'},['request_path_mappings']='/customer'},['mock2']={['query_param_mappings']={['param1']='2',['param2']='2'},['request_path_mappings']='/product'}}
+    else
+        queryNameMAP = loadstring("return "..conf.mock_name_mapping)()
     end
- 
-        
+    if conf.mock_value_mapping == nil then
+        queryValueMAP = {['mock1']={['code']=404,['contentType']='application/json; charset=utf-8',['message']='{\"message\":\"Default Mock JSON Message\"}'},['mock2']={['code']=403,['contentType']='text/html; charset=UTF-8',['message']='<html><h1>Default Mock HTML Message</h1></html>'}}
+    else
+        queryValueMAP = loadstring("return "..conf.mock_value_mapping)()
+    end
+
+    if queryParams ~= nil then
+        ngx.log(ngx.ERR, "TEST 1 ", "")
+         for key, val in pairs(queryParams) do
+                ngx.log(ngx.ERR, "TEST 2 ", "")
+             if type(val) ~= "table" then
+                 ngx.log(ngx.ERR, "TEST 3 "..key..":"..val,"")
+                 queryName = key
+                 queryValue = val 
+                 for keyMAP, valMAP in pairs(queryNameMAP) do
+                    ngx.log(ngx.ERR, "TEST 4 ", "")
+                    if type(valMAP) == "table" then
+                        ngx.log(ngx.ERR, "TEST 5 ","")
+                        mockName = keyMAP
+                         for keyMAP1, valMAP1 in pairs(valMAP) do
+                            ngx.log(ngx.ERR, "TEST 6 ", "")
+                            if type(valMAP1) == "table" and keyMAP1 == "query_param_mappings" then
+                                ngx.log(ngx.ERR, "TEST 7 ","")
+                                finalMapStructure = valMAP1
+                                if finalMapStructure[queryName] == queryValue then
+                                    ngx.log(ngx.ERR, "TEST 8 ","")
+                                end
+                            end
+                         end
+                    end
+                 end
+             end
+         end           
+    end
+
+
+
+    mockValue = queryValueMAP[querystringValue]
+    if mockValue then
+      if mockValue["code"] then
+        errorCode = mockValue["code"]
+      end
+      if mockValue["message"] then
+        transformMessage = false
+        errorMessage = mockValue["message"]
+      end
+       if mockValue["contentType"] then
+        contentType = mockValue["contentType"]
+      end
+    end       
   else
       if conf.error_code and type(conf.error_code) == "number" then
           errorCode = conf.error_code

@@ -61,7 +61,7 @@ function Mocker:access(conf)
     local queryName = ""
     local queryValue = ""
     local mockName = ""
-    local mapStructure = {}
+    local finalMapStructure = {}
         
     if querystringValue then
         if conf.mock_name_mapping == nil then
@@ -88,10 +88,16 @@ function Mocker:access(conf)
                         if type(valMAP) == "table" then
                             ngx.log(ngx.ERR, "TEST 5 ","")
                             mockName = keyMAP
-                            mapStructure = valMAP["query_param_mappings"]
-                            if type(mapStructure) == "table" then
-                                ngx.log(ngx.ERR, "TEST 6 ","")        
-                            end
+                             for keyMAP1, valMAP1 in pairs(valMAP) do
+                                ngx.log(ngx.ERR, "TEST 6 ", "")
+                                if type(valMAP1) == "table" and keyMAP1 == "query_param_mappings" then
+                                    ngx.log(ngx.ERR, "TEST 7 ","")
+                                    finalMapStructure = valMAP1
+                                    if finalMapStructure[queryName] == queryValue then
+                                        ngx.log(ngx.ERR, "TEST 8 ","")
+                                    end
+                                end
+                             end
                         end
                      end
                  end

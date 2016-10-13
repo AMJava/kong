@@ -128,7 +128,7 @@ function Mocker:access(conf)
     end
 
 	if mockName then
-		mockValue = queryValueMAP[querystringValue]
+	  mockValue = queryValueMAP[mockName]
 	end
 	
 	if mockValue then

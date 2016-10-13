@@ -75,31 +75,23 @@ function Mocker:access(conf)
 
     if queryParams ~= nil then
         ngx.log(ngx.ERR, "TEST 1 ", "")
-         for key, val in pairs(queryParams) do
-                ngx.log(ngx.ERR, "TEST 2 ", "")
-             if type(val) ~= "table" then
-                 ngx.log(ngx.ERR, "TEST 3 "..key..":"..val,"")
-                 queryName = key
-                 queryValue = val 
-                 for keyMAP, valMAP in pairs(queryNameMAP) do
+         for keyMAP, valMAP in pairs(queryNameMAP) do
+            ngx.log(ngx.ERR, "TEST 2 ", "")
+            if type(valMAP) == "table" then
+                ngx.log(ngx.ERR, "TEST 3 ","")
+                mockName = keyMAP
+                 for keyMAP1, valMAP1 in pairs(valMAP) do
                     ngx.log(ngx.ERR, "TEST 4 ", "")
-                    if type(valMAP) == "table" then
+                    if type(valMAP1) == "table" and keyMAP1 == "query_param_mappings" then
                         ngx.log(ngx.ERR, "TEST 5 ","")
-                        mockName = keyMAP
-                         for keyMAP1, valMAP1 in pairs(valMAP) do
-                            ngx.log(ngx.ERR, "TEST 6 ", "")
-                            if type(valMAP1) == "table" and keyMAP1 == "query_param_mappings" then
-                                ngx.log(ngx.ERR, "TEST 7 ","")
-                                finalMapStructure = valMAP1
-                                if finalMapStructure[queryName] == queryValue then
-                                    ngx.log(ngx.ERR, "TEST 8 ","")
-                                end
-                            end
-                         end
+                        finalMapStructure = valMAP1
+                        if type(finalMapStructure ) == "table" then
+                            ngx.log(ngx.ERR, "TEST 6 ","")
+                        end
                     end
                  end
-             end
-         end           
+            end
+         end      
     end
 
 

@@ -62,15 +62,17 @@ function Mocker:access(conf)
     local mockName = ""
 	local loopHelper = false
     local isMatched = false
+	local queryParamsCount = 0
+	local mapParamsCount = 0
     local queryMapStructure = {}
         
     if conf.mock_name_mapping == nil then
-        queryNameMAP = {['mock1']={['query_param_mappings']={['param1']='1',['param2']='1'},['request_path_mappings']='/customer'},['mock2']={['query_param_mappings']={['param1']='2',['param2']='2'},['request_path_mappings']='/product'}}
+        queryNameMAP = {['mock1']={['query_param_mappings']={['param1']='1',['param2']='1'}}}
     else
         queryNameMAP = loadstring("return "..conf.mock_name_mapping)()
     end
     if conf.mock_value_mapping == nil then
-        queryValueMAP = {['mock1']={['code']=404,['contentType']='application/json; charset=utf-8',['message']='{\"message\":\"Default Mock JSON Message\"}'},['mock2']={['code']=403,['contentType']='text/html; charset=UTF-8',['message']='<html><h1>Default Mock HTML Message</h1></html>'}}
+        queryValueMAP = {['mock1']={['code']=404,['contentType']='application/json; charset=utf-8',['message']='{\"message\":\"Default Mock JSON Message\"}'}}
     else
         queryValueMAP = loadstring("return "..conf.mock_value_mapping)()
     end
@@ -84,47 +86,48 @@ function Mocker:access(conf)
 						loopHelper = true
 						ngx.log(ngx.ERR, "TEST 4 "..mockName, "")
 						if type(valMAP1) == "table" then
-							ngx.log(ngx.ERR, "TEST 5 ","")
 							queryMapStructure = valMAP1
 							if type(queryMapStructure) == "table" then
 								ngx.log(ngx.ERR, "TEST 6 ","")
-									-- loop url query params
-									for key, val in pairs(queryParams) do
-										ngx.log(ngx.ERR, "TEST 7 ", "")
-										if type(val) ~= "table" and loopHelper == true then
-											queryName = key
-											queryValue = val
-											loopHelper = false
-											-- loop result map for query params
-											for finalKey, finalValue in pairs(queryMapStructure) do
-												ngx.log(ngx.ERR, "TEST 8 ", "")
-												if type(finalValue) ~= "table" then
-													ngx.log(ngx.ERR, "TEST 9 Key:"..finalKey.." Key:"..queryName,"")
-													if finalKey == queryName and finalValue == queryValue then
-														loopHelper = true
-													end
+								queryParamsCount = 0
+								mapParamsCount = 0
+								-- loop url query params
+								for key, val in pairs(queryParams) do
+									queryParamsCount += 1
+									ngx.log(ngx.ERR, "TEST 7 ", "")
+									if type(val) ~= "table" and loopHelper == true then
+										queryName = key
+										queryValue = val
+										loopHelper = false
+										-- loop result map for query params
+										for finalKey, finalValue in pairs(queryMapStructure) do
+											if type(finalValue) ~= "table" then
+												mapParamsCount +=1
+												if finalKey == queryName and finalValue == queryValue then
+													loopHelper = true
 												end
 											end
-											if loopHelper == false then
-												ngx.log(ngx.ERR, "TEST 10 NOT FOUND","")
-												break
-											end
 										end
-										if loopHelper == true then
-											ngx.log(ngx.ERR, "TEST 10 SUCCESS","")
+										if loopHelper == false then
+											ngx.log(ngx.ERR, "TEST 10 NOT FOUND","")
+											break
 										end
 									end
+								end
 									
-									if loopHelper == true then
-										isMatched = true
-										break
-									end
+								if loopHelper == true and queryParamsCount == mapParamsCount then
+									ngx.log(ngx.ERR, "TEST 10 SUCCESS","")
+									isMatched = true
+									break
+								end
 							end
 						end
 					 end
 				end
 			end
-		end      
+		end   
+    else
+	
     end
 
 	if mockName then

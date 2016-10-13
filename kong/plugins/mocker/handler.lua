@@ -82,7 +82,7 @@ function Mocker:access(conf)
                 ngx.log(ngx.ERR, "TEST 3 ","")
                 mockName = keyMAP
                  for keyMAP1, valMAP1 in pairs(valMAP) do
-                    ngx.log(ngx.ERR, "TEST 4 ", "")
+                    ngx.log(ngx.ERR, "TEST 4 "..mockName, "")
                     if type(valMAP1) == "table" and keyMAP1 == "query_param_mappings" then
                         ngx.log(ngx.ERR, "TEST 5 ","")
                         queryMapStructure = valMAP1
@@ -97,8 +97,8 @@ function Mocker:access(conf)
                                         for finalKey, finalValue in pairs(queryMapStructure) do
                                             ngx.log(ngx.ERR, "TEST 8 ", "")
                                             if type(finalValue) ~= "table" then
-                                                ngx.log(ngx.ERR, "TEST 9 ","")
-                                                if finalKey == queryName and finalValue == queryName then
+                                                ngx.log(ngx.ERR, "TEST 9 Key:"..finalKey.." Key:"..queryName,"")
+                                                if finalKey == queryName and finalValue == queryValue then
                                                     isMatched = true
                                                 end
                                             end

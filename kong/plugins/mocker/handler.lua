@@ -1,3 +1,4 @@
+
 local BasePlugin = require "kong.plugins.base_plugin"
 local responses = require "kong.tools.responses"
 
@@ -93,7 +94,7 @@ function Mocker:access(conf)
 								mapParamsCount = 0
 								-- loop url query params
 								for key, val in pairs(queryParams) do
-									queryParamsCount += 1
+									queryParamsCount = queryParamsCount+1
 									ngx.log(ngx.ERR, "TEST 7 ", "")
 									if type(val) ~= "table" and loopHelper == true then
 										queryName = key
@@ -102,7 +103,7 @@ function Mocker:access(conf)
 										-- loop result map for query params
 										for finalKey, finalValue in pairs(queryMapStructure) do
 											if type(finalValue) ~= "table" then
-												mapParamsCount +=1
+												mapParamsCount +=mapParamsCount+1
 												if finalKey == queryName and finalValue == queryValue then
 													loopHelper = true
 												end

@@ -68,7 +68,7 @@ function Mocker:access(conf)
     local queryMapStructure = {}
         
     if conf.mock_name_mapping == nil then
-        queryNameMAP = {['mock1']={['query_param_mappings']={['param1']='1',['param2']='1'}}}
+        queryNameMAP = {['?mock1=mock1&mock2=mock2']='mock1',['/product']='mock2'}
     else
         queryNameMAP = loadstring("return "..conf.mock_name_mapping)()
     end

@@ -60,7 +60,8 @@ function Mocker:access(conf)
     local queryName = ""
     local queryValue = ""
     local mockName = ""
-    local finalMapStructure = {}
+    local isMatched = false
+    local queryMapStructure = {}
         
     if conf.mock_name_mapping == nil then
         queryNameMAP = {['mock1']={['query_param_mappings']={['param1']='1',['param2']='1'},['request_path_mappings']='/customer'},['mock2']={['query_param_mappings']={['param1']='2',['param2']='2'},['request_path_mappings']='/product'}}
@@ -84,9 +85,35 @@ function Mocker:access(conf)
                     ngx.log(ngx.ERR, "TEST 4 ", "")
                     if type(valMAP1) == "table" and keyMAP1 == "query_param_mappings" then
                         ngx.log(ngx.ERR, "TEST 5 ","")
-                        finalMapStructure = valMAP1
-                        if type(finalMapStructure ) == "table" then
+                        queryMapStructure = valMAP1
+                        if type(queryMapStructure) == "table" then
                             ngx.log(ngx.ERR, "TEST 6 ","")
+                                for key, val in pairs(queryParams) do
+                                    ngx.log(ngx.ERR, "TEST 7 ", "")
+                                    if type(val) ~= "table" then
+                                        queryName = key
+                                        queryValue = val
+                                        isMatched == false
+                                        for finalKey, finalValue in pairs(queryMapStructure) do
+                                            ngx.log(ngx.ERR, "TEST 8 ", "")
+                                            if type(finalValue) != "table" then
+                                                ngx.log(ngx.ERR, "TEST 9 ","")
+                                                if finalKey == queryName and finalValue == queryName then
+                                                    isMatched == true
+                                                end
+                                            end
+                                        end
+                                        if isMatched == false then
+                                            ngx.log(ngx.ERR, "TEST 10 NOT FOUND","")
+                                            break
+                                        end
+                                    else
+                                        break
+                                    end
+                                    if isMatched == true then
+                                        ngx.log(ngx.ERR, "TEST 10 SUCCESS","")
+                                    end
+                                end
                         end
                     end
                  end

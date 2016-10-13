@@ -87,7 +87,7 @@ function Mocker:access(conf)
 					mockName = keyMAP
 					 for keyMAP1, valMAP1 in pairs(valMAP) do
 						ngx.log(ngx.ERR, "TEST 4 "..mockName, "")
-						if type(valMAP1) == "table" and keyMAP1 == "query_param_mappings" then
+						if type(valMAP1) == "table" then
 							ngx.log(ngx.ERR, "TEST 5 ","")
 							queryMapStructure = valMAP1
 							if type(queryMapStructure) == "table" then

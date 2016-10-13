@@ -46,24 +46,43 @@ function Mocker:access(conf)
   Mocker.super.access(self)
   
   local errorCode = 403
-  local errorMessage = "This service is not available right now"
+  local errorMessage = "Default Mock JSON Message"
   local contentType = "application/json; charset=utf-8"
   local transformMessage = true
     
-  if conf.use_query_params and type(conf.use_query_params) == "boolean" then
-    local querystring = req_get_uri_args()
-    ngx.log(ngx.ERR, "Error "..ngx.ctx.upstream_url, "")
+  if conf.use_url_params and type(conf.use_url_params) == "boolean" then
+    local queryParams = req_get_uri_args()
+    local url = ngx.ctx.upstream_url
         
     local querystringValue = querystring["mock"]
     local mockValue = {}
+    local queryNameMAP = {} 
     local queryValueMAP = {}   
         
     if querystringValue then
-        if conf.query_param_mapping == nil then
-            queryValueMAP = {['mock1']={['code']=404,['contentType']='application/json; charset=utf-8',['message']='{\"message\":\"Service is Not Available\"}'},['mock2']={['code']=403,['contentType']='text/html; charset=UTF-8',['message']='<html><h1>Service is Not Available</h1></html>'}}
+        if conf.mock_name_mapping == nil then
+            queryNameMAP = {['mock1']={['query_param_mappings']={['param1']='1',['param2']='1'},['request_path_mappings']='/customer'}},['mock2']={['query_param_mappings']={['param1']='2',['param2']='2'},['request_path_mappings']='/product'}}
         else
-            queryValueMAP = loadstring("return "..conf.query_param_mapping)()
+            queryNameMAP = loadstring("return "..conf.mock_name_mapping)()
         end
+        if conf.mock_value_mapping == nil then
+            queryValueMAP = {['mock1']={['code']=404,['contentType']='application/json; charset=utf-8',['message']='{\"message\":\"Default Mock JSON Message\"}'},['mock2']={['code']=403,['contentType']='text/html; charset=UTF-8',['message']='<html><h1>Default Mock HTML Message</h1></html>'}}
+        else
+            queryValueMAP = loadstring("return "..conf.mock_value_mapping)()
+        end
+
+        if queryParams ~= nil then
+            ngx.log(ngx.ERR, "TEST 1 ", "")
+            for i,v in ipairs(queryParams) do
+                for a,b in ipairs(queryNameMAP) do
+                    if b ~= nil and type(b) ~= "table" then
+                        ngx.log(ngx.ERR, "TEST 2 ", "")
+                    end
+                end    
+            end           
+        end
+        
+        
         
         mockValue = queryValueMAP[querystringValue]
         if mockValue then

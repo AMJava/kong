@@ -74,9 +74,11 @@ function Mocker:access(conf)
         if queryParams ~= nil then
             ngx.log(ngx.ERR, "TEST 1 ", "")
             for i,v in ipairs(queryParams) do
+                    ngx.log(ngx.ERR, "TEST 2 "..v, "")
+                    ngx.log(ngx.ERR, "TEST 3 "..i, "")
                 for a,b in ipairs(queryNameMAP) do
                     if b ~= nil and type(b) ~= "table" then
-                        ngx.log(ngx.ERR, "TEST 2 ", "")
+                        ngx.log(ngx.ERR, "TEST 4 ", "")
                     end
                 end    
             end           

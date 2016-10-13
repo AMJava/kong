@@ -99,7 +99,7 @@ function Mocker:access(conf)
                                             if type(finalValue) ~= "table" then
                                                 ngx.log(ngx.ERR, "TEST 9 ","")
                                                 if finalKey == queryName and finalValue == queryName then
-                                                    isMatched == true
+                                                    isMatched = true
                                                 end
                                             end
                                         end

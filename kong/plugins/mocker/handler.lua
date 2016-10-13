@@ -5,7 +5,7 @@ local cjson = require "cjson"
 local meta = require "kong.meta"
 local req_get_uri_args = ngx.req.get_uri_args
 local ngx_log = ngx.log
-local request_uri = ngx.var.request_uri
+local eq.get_uri = ngx.req.get_uri
 
 --local server_header = _KONG._NAME.."/".._KONG._VERSION
 local server_header = meta._NAME.."/"..meta._VERSION

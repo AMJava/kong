@@ -112,12 +112,14 @@ function Mocker:access(conf)
 										if loopHelper == false then
 											ngx.log(ngx.ERR, "TEST 10 NOT FOUND","")
 											break
-										end
+										else
+											ngx.log(ngx.ERR, "OK","")	
+											end
 									end
 								end
 									
-								if loopHelper == true and queryParamsCount == mapParamsCount then
-									ngx.log(ngx.ERR, "TEST 10 SUCCESS","")
+								if loopHelper == true then
+									ngx.log(ngx.ERR, "TEST 10 SUCCESS"..queryParamsCount.." TEST "..mapParamsCount,"")
 									isMatched = true
 									break
 								end

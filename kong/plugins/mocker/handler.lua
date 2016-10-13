@@ -87,43 +87,6 @@ function Mocker:access(conf)
 					mockName = keyMAP
 					 for keyMAP1, valMAP1 in pairs(valMAP) do
 						ngx.log(ngx.ERR, "TEST 4 "..mockName, "")
-						if type(valMAP1) == "table" and keyMAP1 == "query_param_mappings" then
-							ngx.log(ngx.ERR, "TEST 5 ","")
-							queryMapStructure = valMAP1
-							if type(queryMapStructure) == "table" then
-								ngx.log(ngx.ERR, "TEST 6 ","")
-									-- loop url query params
-									for key, val in pairs(queryParams) do
-										ngx.log(ngx.ERR, "TEST 7 ", "")
-										if type(val) ~= "table" and loopHelper == true then
-											queryName = key
-											queryValue = val
-											loopHelper = false
-											-- loop result map for query params
-											for finalKey, finalValue in pairs(queryMapStructure) do
-												ngx.log(ngx.ERR, "TEST 8 ", "")
-												if type(finalValue) ~= "table" then
-													ngx.log(ngx.ERR, "TEST 9 Key:"..finalKey.." Key:"..queryName,"")
-													if finalKey == queryName and finalValue == queryValue then
-														loopHelper = true
-													end
-												end
-											end
-											if loopHelper == false then
-												ngx.log(ngx.ERR, "TEST 10 NOT FOUND","")
-											end
-										end
-										if loopHelper == true then
-											ngx.log(ngx.ERR, "TEST 10 SUCCESS","")
-										end
-									end
-									
-									if loopHelper == true then
-										isMatched = true
-										break
-									end
-							end
-						end
 					 end
 				end
 			end

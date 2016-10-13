@@ -91,7 +91,6 @@ function Mocker:access(conf)
 							if type(queryMapStructure) == "table" then
 								ngx.log(ngx.ERR, "TEST 6 ","")
 								queryParamsCount = 0
-								mapParamsCount = 0
 								-- loop url query params
 								for key, val in pairs(queryParams) do
 									queryParamsCount = queryParamsCount+1
@@ -100,10 +99,11 @@ function Mocker:access(conf)
 										queryName = key
 										queryValue = val
 										loopHelper = false
+										mapParamsCount = 0
 										-- loop result map for query params
 										for finalKey, finalValue in pairs(queryMapStructure) do
 											if type(finalValue) ~= "table" then
-												mapParamsCount =mapParamsCount+1
+												mapParamsCount +=mapParamsCount+1
 												if finalKey == queryName and finalValue == queryValue then
 													loopHelper = true
 												end
@@ -112,14 +112,12 @@ function Mocker:access(conf)
 										if loopHelper == false then
 											ngx.log(ngx.ERR, "TEST 10 NOT FOUND","")
 											break
-										else
-											ngx.log(ngx.ERR, "OK","")	
-											end
+										end
 									end
 								end
 									
-								if loopHelper == true then
-									ngx.log(ngx.ERR, "TEST 10 SUCCESS"..queryParamsCount.." TEST "..mapParamsCount,"")
+								if loopHelper == true and queryParamsCount == mapParamsCount then
+									ngx.log(ngx.ERR, "TEST 10 SUCCESS","")
 									isMatched = true
 									break
 								end

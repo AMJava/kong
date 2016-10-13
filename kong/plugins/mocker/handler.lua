@@ -103,7 +103,7 @@ function Mocker:access(conf)
 										-- loop result map for query params
 										for finalKey, finalValue in pairs(queryMapStructure) do
 											if type(finalValue) ~= "table" then
-												mapParamsCount +=mapParamsCount+1
+												mapParamsCount =mapParamsCount+1
 												if finalKey == queryName and finalValue == queryValue then
 													loopHelper = true
 												end

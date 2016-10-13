@@ -54,7 +54,7 @@ function Mocker:access(conf)
     local queryParams = req_get_uri_args()
     local url = ngx.ctx.upstream_url
         
-    local querystringValue = querystring["mock"]
+    local querystringValue = queryParams["mock"]
     local mockValue = {}
     local queryNameMAP = {} 
     local queryValueMAP = {}   

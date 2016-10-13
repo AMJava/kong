@@ -93,7 +93,7 @@ function Mocker:access(conf)
                                     if type(val) ~= "table" then
                                         queryName = key
                                         queryValue = val
-                                        isMatched == false
+                                        isMatched = false
                                         for finalKey, finalValue in pairs(queryMapStructure) do
                                             ngx.log(ngx.ERR, "TEST 8 ", "")
                                             if type(finalValue) != "table" then

@@ -95,9 +95,7 @@ function Mocker:access(conf)
                         end
                      end
                  end
-             end   
-                 end
-             end         
+             end           
         end
         
         

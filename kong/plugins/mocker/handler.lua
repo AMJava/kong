@@ -61,7 +61,7 @@ function Mocker:access(conf)
         
     if querystringValue then
         if conf.mock_name_mapping == nil then
-            queryNameMAP = {['mock1']={['query_param_mappings']={['param1']='1',['param2']='1'},['request_path_mappings']='/customer'}},['mock2']={['query_param_mappings']={['param1']='2',['param2']='2'},['request_path_mappings']='/product'}}
+            queryNameMAP = {['mock1']={['query_param_mappings']={['param1']='1',['param2']='1'},['request_path_mappings']='/customer'},['mock2']={['query_param_mappings']={['param1']='2',['param2']='2'},['request_path_mappings']='/product'}}
         else
             queryNameMAP = loadstring("return "..conf.mock_name_mapping)()
         end

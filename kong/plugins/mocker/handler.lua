@@ -80,12 +80,12 @@ function Mocker:access(conf)
         ngx.log(ngx.ERR, "TEST 1 ", "")
          for keyMAP, valMAP in pairs(queryNameMAP) do
             if loopHelper == false and isMatched == false then
-				loopHelper = true
 				ngx.log(ngx.ERR, "TEST 2 ", "")
 				if type(valMAP) == "table" then
 					ngx.log(ngx.ERR, "TEST 3 ","")
 					mockName = keyMAP
 					 for keyMAP1, valMAP1 in pairs(valMAP) do
+						loopHelper = true
 						ngx.log(ngx.ERR, "TEST 4 "..mockName, "")
 						if type(valMAP1) == "table" then
 							ngx.log(ngx.ERR, "TEST 5 ","")

@@ -104,7 +104,7 @@ function Mocker:access(conf)
 		if type(keyMAP) == "string" then
 			ngx.log(ngx.ERR, "TEST 02 "..path,"")
 			if string.sub(keyMAP, 0, 1) == "?" and queryParams ~= nil then
-				loopHelper == true
+				loopHelper = true
 				queryString = string.sub(keyMAP, 2)
 				parsedQueryValue = queryString:split("&")
 				if parsedQueryValue ~= nil and type(parsedQueryValue) == "table" then

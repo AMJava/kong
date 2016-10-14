@@ -80,7 +80,8 @@ function Mocker:access(conf)
     local mockName = ""
     local parsedQueryValue = {}	
 		
-    local loopHelper = false
+    local loopHelper = true
+    local loopHelper2 = false
     local isMatched = false
     local queryParamsCount = 0
     local mapParamsCount = 0
@@ -103,26 +104,37 @@ function Mocker:access(conf)
 		if type(keyMAP) == "string" then
 			ngx.log(ngx.ERR, "TEST 02 "..path,"")
 			if string.sub(keyMAP, 0, 1) == "?" and queryParams ~= nil then
-				queryString = string.sub(keyMAP, 1,5)
+				loopHelper == true
+				queryString = string.sub(keyMAP, 2)
 				parsedQueryValue = queryString:split("&")
-				ngx.log(ngx.ERR, "TEST 1 "..queryString..":"..keyMAP,"")
 				if parsedQueryValue ~= nil and type(parsedQueryValue) == "table" then
 					for key, val in pairs(queryParams) do
-						if type(val) ~= "table"	then
+						if type(val) ~= "table"	and loopHelper == true then
+						  loopHelper = false
 						  queryValue = key.."="..val
 						  ngx.log(ngx.ERR, "TEST 5 "..queryValue,"")
 						  for i = 1, #parsedQueryValue do
 						     ngx.log(ngx.ERR, "TEST 6 "..parsedQueryValue[i],"")
 						     if parsedQueryValue[i] and parsedQueryValue[i] == queryValue then
 							ngx.log(ngx.ERR, "TEST 6 ","")
+							loopHelper = true
+							break
 						     end
 						  end
+						else
+						  break
 						end
 					end
+					if loopHelper then
+					  ngx.log(ngx.ERR, "TEST 10 SUCCESS QUERY","")
+					  mockName = valMAP
+					  break
+				 	end
 				end
 			elseif string.sub(keyMAP, 0, 1) == "/" then
 				if path and keyMAP == path then
 				  mockName = valMAP
+				  ngx.log(ngx.ERR, "TEST 10 SUCCESS PATH","")
 				  break
 				end
 			end

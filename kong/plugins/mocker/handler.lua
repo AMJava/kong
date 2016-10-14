@@ -98,7 +98,7 @@ function Mocker:access(conf)
     end
 		
     --find needed mock response 
-    if queryParams ~= nil then
+    if queryParams ~= nil or path then
          for keyMAP, valMAP in pairs(queryNameMAP) do
 		ngx.log(ngx.ERR, "TEST 2 "..valMAP..":"..keyMAP,"")
 		if type(keyMAP) == "string" then
@@ -110,6 +110,7 @@ function Mocker:access(conf)
 				if parsedQueryValue ~= nil and type(parsedQueryValue) == "table" then
 					queryParamsCount = 0
 					for key, val in pairs(queryParams) do
+						ngx.log(ngx.ERR, "TEST 100"..key..""..val,"")
 						queryParamsCount = queryParamsCount+1
 						if type(val) ~= "table"	and loopHelper == true then
 						  loopHelper = false

@@ -79,7 +79,8 @@ function Mocker:access(conf)
     else
         queryValueMAP = loadstring("return "..conf.mock_value_mapping)()
     end
-    if queryParams ~= nil and type(valMAP) == "table" then
+ 
+    if queryParams ~= nil and type(queryNameMAP) == "table" then
 	ngx.log(ngx.ERR, "TEST 0 "..pathIndex,"")
          for keyMAP, valMAP in pairs(queryNameMAP) do
 		ngx.log(ngx.ERR, "TEST 01 "..pathIndex,"")

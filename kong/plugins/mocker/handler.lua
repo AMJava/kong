@@ -108,12 +108,15 @@ function Mocker:access(conf)
 				queryString = string.sub(keyMAP, 2)
 				parsedQueryValue = queryString:split("&")
 				if parsedQueryValue ~= nil and type(parsedQueryValue) == "table" then
+					queryParamsCount = 0
 					for key, val in pairs(queryParams) do
+						queryParamsCount = queryParamsCount+1
 						if type(val) ~= "table"	and loopHelper == true then
 						  loopHelper = false
 						  queryValue = key.."="..val
 						  ngx.log(ngx.ERR, "TEST 5 "..queryValue,"")
 						  for i = 1, #parsedQueryValue do
+						     mapParamsCoun = #parsedQueryValue			
 						     ngx.log(ngx.ERR, "TEST 6 "..parsedQueryValue[i],"")
 						     if parsedQueryValue[i] and parsedQueryValue[i] == queryValue then
 							ngx.log(ngx.ERR, "TEST 6 ","")
@@ -125,7 +128,7 @@ function Mocker:access(conf)
 						  break
 						end
 					end
-					if loopHelper then
+					if loopHelper and queryParamsCount == mapParamsCount then
 					  ngx.log(ngx.ERR, "TEST 10 SUCCESS QUERY","")
 					  mockName = valMAP
 					  break

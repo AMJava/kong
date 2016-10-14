@@ -116,7 +116,7 @@ function Mocker:access(conf)
 						  queryValue = key.."="..val
 						  ngx.log(ngx.ERR, "TEST 5 "..queryValue,"")
 						  for i = 1, #parsedQueryValue do
-						     mapParamsCoun = #parsedQueryValue			
+						     mapParamsCount = #parsedQueryValue			
 						     ngx.log(ngx.ERR, "TEST 6 "..parsedQueryValue[i],"")
 						     if parsedQueryValue[i] and parsedQueryValue[i] == queryValue then
 							ngx.log(ngx.ERR, "TEST 6 ","")

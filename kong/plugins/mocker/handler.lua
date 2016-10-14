@@ -54,19 +54,21 @@ function Mocker:access(conf)
   if conf.use_url_params and type(conf.use_url_params) == "boolean" then
     local queryParams = req_get_uri_args()
     local url = ngx.ctx.upstream_url
+    local pathIndex = url:find('[^/]/[^/]')
         
     local mockValue = {}
     local queryNameMAP = {} 
     local queryValueMAP = {}
+
     local queryName = ""
     local queryValue = ""
     local mockName = ""
-	local loopHelper = false
+    local loopHelper = false
     local isMatched = false
-	local queryParamsCount = 0
-	local mapParamsCount = 0
+    local queryParamsCount = 0
+    local mapParamsCount = 0
     local queryMapStructure = {}
-        
+		
     if conf.mock_name_mapping == nil then
         queryNameMAP = {['?mock1=mock1&mock2=mock2']='mock1',['/product']='mock2'}
     else
@@ -77,12 +79,12 @@ function Mocker:access(conf)
     else
         queryValueMAP = loadstring("return "..conf.mock_value_mapping)()
     end
-
+		
     if queryParams ~= nil and type(valMAP) == "table" then
          for keyMAP, valMAP in pairs(queryNameMAP) do
 	     if type(keyMAP) == "string" then
              	if string.sub(keyMAP, 0, 1) == "?" then
-		   ngx.log(ngx.ERR, "TEST 1 ","")
+		   ngx.log(ngx.ERR, "TEST 1 "..pathIndex,"")
 	        else if string.sub(keyMAP, 0, 1) == "/" then
 		  ngx.log(ngx.ERR, "TEST 2 ","")					
 		end

@@ -88,7 +88,7 @@ function Mocker:access(conf)
 			if string.sub(keyMAP, 0, 1) == "?" and queryParams ~= nil then
 				ngx.log(ngx.ERR, "TEST 1 ","")
 				for key, val in pairs(queryParams) do
-					if type(val) ~= "table"	
+					if type(val) ~= "table"	then
 					  queryValue = key.."="..val
 					  ngx.log(ngx.ERR, "TEST 5 "..queryValue,"")
 					end

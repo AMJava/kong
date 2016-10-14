@@ -55,7 +55,8 @@ function Mocker:access(conf)
     local queryParams = req_get_uri_args()
     local url = ngx.ctx.upstream_url
     local pathIndex = url:find('[^/]/[^/]')
-        
+    local path = url:sub(pathIndex + 1)    
+		
     local mockValue = {}
     local queryNameMAP = {} 
     local queryValueMAP = {}
@@ -81,13 +82,12 @@ function Mocker:access(conf)
     end
  
     if queryParams ~= nil and type(queryNameMAP) == "table" then
-	ngx.log(ngx.ERR, "TEST 0 "..pathIndex,"")
          for keyMAP, valMAP in pairs(queryNameMAP) do
-		ngx.log(ngx.ERR, "TEST 01 "..pathIndex,"")
+		ngx.log(ngx.ERR, "TEST 01 "..path,"")
 		if type(keyMAP) == "string" then
-			ngx.log(ngx.ERR, "TEST 02 "..pathIndex,"")
+			ngx.log(ngx.ERR, "TEST 02 "..path,"")
 			if string.sub(keyMAP, 0, 1) == "?" then
-				ngx.log(ngx.ERR, "TEST 1 "..pathIndex,"")
+				ngx.log(ngx.ERR, "TEST 1 ","")
 			elseif string.sub(keyMAP, 0, 1) == "/" then
 				ngx.log(ngx.ERR, "TEST 2 ","")					
 			end

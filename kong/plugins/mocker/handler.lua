@@ -15,7 +15,7 @@ local Mocker = BasePlugin:extend()
 
 --Set Priority
 Mocker.PRIORITY = 1
-
+--split function for dev environment
 function string:split( inSplitPattern, outResults )
   if not outResults then
     outResults = { }
@@ -30,7 +30,7 @@ function string:split( inSplitPattern, outResults )
   table.insert( outResults, string.sub( self, theStart ) )
   return outResults
 end
-
+-- send response function
 local function send_response(status_code,content, contentTypeJson,transformMessage)
     ngx.status = status_code
     if contentTypeJson == "application/json; charset=utf-8" then
@@ -81,12 +81,11 @@ function Mocker:access(conf)
     local parsedQueryValue = {}	
 		
     local loopHelper = true
-    local loopHelper2 = false
     local isMatched = false
     local queryParamsCount = 0
     local mapParamsCount = 0
-    local queryMapStructure = {}
-		
+
+    -- populate main fields		
     if conf.mock_name_mapping == nil then
         queryNameMAP = {['?mock1=mock1&mock2=mock2']='mock1',['/product']='mock2'}
     else
@@ -97,12 +96,12 @@ function Mocker:access(conf)
     else
         queryValueMAP = loadstring("return "..conf.mock_value_mapping)()
     end
- 
+		
+    --find needed mock response 
     if queryParams ~= nil or path then
          for keyMAP, valMAP in pairs(queryNameMAP) do
-		ngx.log(ngx.ERR, "TEST 01 "..path,"")
 		if type(keyMAP) == "string" then
-			ngx.log(ngx.ERR, "TEST 02 "..path,"")
+			-- if query param
 			if string.sub(keyMAP, 0, 1) == "?" and queryParams ~= nil then
 				loopHelper = true
 				queryString = string.sub(keyMAP, 2)
@@ -117,9 +116,7 @@ function Mocker:access(conf)
 						  ngx.log(ngx.ERR, "TEST 5 "..queryValue,"")
 						  for i = 1, #parsedQueryValue do
 						     mapParamsCount = #parsedQueryValue			
-						     ngx.log(ngx.ERR, "TEST 6 "..parsedQueryValue[i],"")
 						     if parsedQueryValue[i] and parsedQueryValue[i] == queryValue then
-							ngx.log(ngx.ERR, "TEST 6 ","")
 							loopHelper = true
 							break
 						     end
@@ -128,17 +125,15 @@ function Mocker:access(conf)
 						  break
 						end
 					end
-					ngx.log(ngx.ERR, "CHECK:"..queryParamsCount.." : "..mapParamsCount,"")
 					if loopHelper and queryParamsCount == mapParamsCount then
-					  ngx.log(ngx.ERR, "TEST 10 SUCCESS QUERY","")
 					  mockName = valMAP
 					  break
 				 	end
 				end
+			-- if path
 			elseif string.sub(keyMAP, 0, 1) == "/" then
 				if path and keyMAP == path then
 				  mockName = valMAP
-				  ngx.log(ngx.ERR, "TEST 10 SUCCESS PATH","")
 				  break
 				end
 			end

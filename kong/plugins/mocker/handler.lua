@@ -16,6 +16,21 @@ local Mocker = BasePlugin:extend()
 --Set Priority
 Mocker.PRIORITY = 1
 
+local function string:split( inSplitPattern, outResults )
+  if not outResults then
+    outResults = { }
+  end
+  local theStart = 1
+  local theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
+  while theSplitStart do
+    table.insert( outResults, string.sub( self, theStart, theSplitStart-1 ) )
+    theStart = theSplitEnd + 1
+    theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
+  end
+  table.insert( outResults, string.sub( self, theStart ) )
+  return outResults
+end
+
 local function send_response(status_code,content, contentTypeJson,transformMessage)
     ngx.status = status_code
     if contentTypeJson == "application/json; charset=utf-8" then
@@ -62,7 +77,7 @@ function Mocker:access(conf)
     local queryValueMAP = {}
     local queryValue = ""
     local mockName = ""
-		
+    local parsedQueryValue = {}		
     local loopHelper = false
     local isMatched = false
     local queryParamsCount = 0
@@ -86,6 +101,7 @@ function Mocker:access(conf)
 		if type(keyMAP) == "string" then
 			ngx.log(ngx.ERR, "TEST 02 "..path,"")
 			if string.sub(keyMAP, 0, 1) == "?" and queryParams ~= nil then
+				parsedQueryValue = string.sub(keyMAP, 1):split("&")
 				ngx.log(ngx.ERR, "TEST 1 ","")
 				for key, val in pairs(queryParams) do
 					if type(val) ~= "table"	then

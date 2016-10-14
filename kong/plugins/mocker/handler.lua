@@ -76,8 +76,10 @@ function Mocker:access(conf)
     local queryNameMAP = {} 
     local queryValueMAP = {}
     local queryValue = ""
+    local queryString = ""
     local mockName = ""
-    local parsedQueryValue = {}		
+    local parsedQueryValue = {}	
+		
     local loopHelper = false
     local isMatched = false
     local queryParamsCount = 0
@@ -100,9 +102,11 @@ function Mocker:access(conf)
 		ngx.log(ngx.ERR, "TEST 01 "..path,"")
 		if type(keyMAP) == "string" then
 			ngx.log(ngx.ERR, "TEST 02 "..path,"")
+			string.sub(keyMAP, 0, 1
 			if string.sub(keyMAP, 0, 1) == "?" and queryParams ~= nil then
-				parsedQueryValue = string.sub(keyMAP, 1):split("&")
-				ngx.log(ngx.ERR, "TEST 1 ","")
+				queryString = string.sub(keyMAP, 1)
+				parsedQueryValue = queryString:split("&")
+				ngx.log(ngx.ERR, "TEST 1 "..queryString,"")
 				if parsedQueryValue ~= nil and type(parsedQueryValue) == "table" then
 					for key, val in pairs(queryParams) do
 						if type(val) ~= "table"	then

@@ -128,6 +128,7 @@ function Mocker:access(conf)
 						  break
 						end
 					end
+					ngx.log(ngx.ERR, "CHECK:"..queryParamsCount.." : "..mapParamsCount,"")
 					if loopHelper and queryParamsCount == mapParamsCount then
 					  ngx.log(ngx.ERR, "TEST 10 SUCCESS QUERY","")
 					  mockName = valMAP

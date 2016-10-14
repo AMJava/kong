@@ -16,7 +16,7 @@ local Mocker = BasePlugin:extend()
 --Set Priority
 Mocker.PRIORITY = 1
 
-local function string:split( inSplitPattern, outResults )
+function string:split( inSplitPattern, outResults )
   if not outResults then
     outResults = { }
   end

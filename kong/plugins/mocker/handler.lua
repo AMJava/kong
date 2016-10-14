@@ -100,6 +100,7 @@ function Mocker:access(conf)
     --find needed mock response 
     if queryParams ~= nil or path then
          for keyMAP, valMAP in pairs(queryNameMAP) do
+		ngx.log(ngx.ERR, "TEST 2 "..valMAP,"")
 		if type(keyMAP) == "string" then
 			-- if query param
 			if string.sub(keyMAP, 0, 1) == "?" and queryParams ~= nil then
@@ -125,6 +126,7 @@ function Mocker:access(conf)
 						end
 					end
 					if loopHelper and queryParamsCount == mapParamsCount then
+					  ngx.log(ngx.ERR, "TEST 3 "..valMAP,"")
 					  mockName = valMAP
 					  break
 				 	end
@@ -132,6 +134,7 @@ function Mocker:access(conf)
 			-- if path
 			elseif string.sub(keyMAP, 0, 1) == "/" then
 				if path and keyMAP == path then
+				  ngx.log(ngx.ERR, "TEST 5 "..valMAP,"")
 				  mockName = valMAP
 				  break
 				end

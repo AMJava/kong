@@ -103,7 +103,7 @@ function Mocker:access(conf)
 			if string.sub(keyMAP, 0, 1) == "?" and queryParams ~= nil then
 				parsedQueryValue = string.sub(keyMAP, 1):split("&")
 				ngx.log(ngx.ERR, "TEST 1 ","")
-				if parsedQueryValue ~= nil and parsedQueryValue type(val) == "table" then
+				if parsedQueryValue ~= nil and type(parsedQueryValue) == "table" then
 					for key, val in pairs(queryParams) do
 						if type(val) ~= "table"	then
 						  queryValue = key.."="..val

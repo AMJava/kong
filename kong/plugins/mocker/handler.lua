@@ -98,12 +98,12 @@ function Mocker:access(conf)
     end
 		
     --find needed mock response 
-    if queryParams ~= nil or path then
+    if next(queryParams) ~= nil or path then
          for keyMAP, valMAP in pairs(queryNameMAP) do
 		ngx.log(ngx.ERR, "TEST 2 "..valMAP..":"..keyMAP,"")
 		if type(keyMAP) == "string" then
 			-- if query param
-			if string.sub(keyMAP, 0, 1) == "?" and queryParams ~= nil then
+			if string.sub(keyMAP, 0, 1) == "?" and next(queryParams) ~= nil then
 				loopHelper = true
 				queryString = string.sub(keyMAP, 2)
 				parsedQueryValue = queryString:split("&")

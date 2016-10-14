@@ -89,8 +89,9 @@ function Mocker:access(conf)
 				ngx.log(ngx.ERR, "TEST 1 ","")
 			elseif string.sub(keyMAP, 0, 1) == "/" then
 				if path and keyMAP == path then
-				mockName = valMAP
-				break
+				  mockName = valMAP
+				  break
+				end
 			end
 		end
          end

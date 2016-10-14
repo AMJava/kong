@@ -83,13 +83,14 @@ function Mocker:access(conf)
  
     if queryParams ~= nil or path then
          for keyMAP, valMAP in pairs(queryNameMAP) do
-		ngx.log(ngx.ERR, "TEST 01 "..path,"")
 		if type(keyMAP) == "string" then
 			ngx.log(ngx.ERR, "TEST 02 "..path,"")
 			if string.sub(keyMAP, 0, 1) == "?" then
 				ngx.log(ngx.ERR, "TEST 1 ","")
 			elseif string.sub(keyMAP, 0, 1) == "/" then
-				ngx.log(ngx.ERR, "TEST 2 ","")					
+				if path and keyMAP == path then
+				isMatched == true
+				break
 			end
 		end
          end

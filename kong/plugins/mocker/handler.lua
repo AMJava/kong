@@ -142,6 +142,7 @@ function Mocker:access(conf)
     end
 		
     if mockName then
+	ngx.log(ngx.ERR, "TEST 1 "..mockName,"")
       mockValue = queryValueMAP[mockName]
     end
 	

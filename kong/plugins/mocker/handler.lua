@@ -78,56 +78,16 @@ function Mocker:access(conf)
         queryValueMAP = loadstring("return "..conf.mock_value_mapping)()
     end
 
-    if queryParams ~= nil then
+    if queryParams ~= nil and type(valMAP) == "table" then
          for keyMAP, valMAP in pairs(queryNameMAP) do
-            if loopHelper == false and isMatched == false then
-				if type(valMAP) == "table" then
-					mockName = keyMAP
-					 for keyMAP1, valMAP1 in pairs(valMAP) do
-						loopHelper = true
-						ngx.log(ngx.ERR, "TEST 4 "..mockName, "")
-						if type(valMAP1) == "table" then
-							queryMapStructure = valMAP1
-							if type(queryMapStructure) == "table" then
-								ngx.log(ngx.ERR, "TEST 6 ","")
-								queryParamsCount = 0
-								-- loop url query params
-								for key, val in pairs(queryParams) do
-									queryParamsCount = queryParamsCount+1
-									ngx.log(ngx.ERR, "TEST 7 ", "")
-									if type(val) ~= "table" and loopHelper == true then
-										queryName = key
-										queryValue = val
-										loopHelper = false
-										mapParamsCount = 0
-										-- loop result map for query params
-										for finalKey, finalValue in pairs(queryMapStructure) do
-											if type(finalValue) ~= "table" then
-												mapParamsCount =mapParamsCount+1
-												if finalKey == queryName and finalValue == queryValue then
-													loopHelper = true
-												end
-											end
-										end
-										if loopHelper == false then
-											ngx.log(ngx.ERR, "TEST 10 NOT FOUND","")
-											break
-										end
-									end
-								end
-									
-								if loopHelper == true and queryParamsCount == mapParamsCount then
-									ngx.log(ngx.ERR, "TEST 10 SUCCESS","")
-									isMatched = true
-									break
-								end
-							end
-						end
-					 end
-				end
-			end
-		end   
-    else
+	     if type(keyMAP) == "string" then
+             	if string.sub(keyMAP, 0, 1) == "?" then
+		   ngx.log(ngx.ERR, "TEST 1 ","")
+	        else if string.sub(keyMAP, 0, 1) == "/" then
+		  ngx.log(ngx.ERR, "TEST 2 ","")					
+		end
+	     end
+         end
 	
     end
 

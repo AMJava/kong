@@ -60,10 +60,9 @@ function Mocker:access(conf)
     local mockValue = {}
     local queryNameMAP = {} 
     local queryValueMAP = {}
-
-    local queryName = ""
     local queryValue = ""
     local mockName = ""
+		
     local loopHelper = false
     local isMatched = false
     local queryParamsCount = 0
@@ -83,10 +82,17 @@ function Mocker:access(conf)
  
     if queryParams ~= nil or path then
          for keyMAP, valMAP in pairs(queryNameMAP) do
+		ngx.log(ngx.ERR, "TEST 01 "..path,"")
 		if type(keyMAP) == "string" then
 			ngx.log(ngx.ERR, "TEST 02 "..path,"")
-			if string.sub(keyMAP, 0, 1) == "?" then
+			if string.sub(keyMAP, 0, 1) == "?" and queryParams ~= nil then
 				ngx.log(ngx.ERR, "TEST 1 ","")
+				for key, val in pairs(queryParams) do
+					if type(val) ~= "table"	
+					  queryValue = key.."="..val
+					  ngx.log(ngx.ERR, "TEST 5 "..queryValue,"")
+					end
+				end
 			elseif string.sub(keyMAP, 0, 1) == "/" then
 				if path and keyMAP == path then
 				  mockName = valMAP

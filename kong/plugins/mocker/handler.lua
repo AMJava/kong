@@ -70,7 +70,7 @@ function Mocker:access(conf)
     local queryParams = req_get_uri_args()
     local url = ngx.ctx.upstream_url
     local pathIndex = url:find('[^/]/[^/]')
-    local path = ""
+    local path = nil
 
     if pathIndex then
       --path = url:sub(pathIndex + 1) 

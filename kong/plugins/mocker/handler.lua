@@ -74,6 +74,7 @@ function Mocker:access(conf)
 
     if pathIndex then
       path = url:sub(pathIndex + 1) 
+	ngx.log(ngx.ERR, "TEST 1 "..path,"")		
     end
 		
     local mockValue = {}

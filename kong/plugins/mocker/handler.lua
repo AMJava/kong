@@ -73,7 +73,7 @@ function Mocker:access(conf)
     local path = nil
 
     if pathIndex then
-      --path = url:sub(pathIndex + 1) 
+      path = url:sub(pathIndex + 1) 
     end
 		
     local mockValue = {}
@@ -81,7 +81,7 @@ function Mocker:access(conf)
     local queryValueMAP = {}
     local queryValue = ""
     local queryString = ""
-    local mockName = ""
+    local mockName = nil
     local parsedQueryValue = {}	
 		
     local loopHelper = true

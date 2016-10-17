@@ -17,8 +17,8 @@ local _alf_buffers = {} -- buffers per-api
 local BufferHTTPHandler = BasePlugin:extend()
 
 function BufferHTTPHandler:new()
-  ngx.log(ngx.ERR, "In new ", "")
   BufferHTTPHandler.super.new(self, "bufferhttp-log")
+  ngx.log(ngx.ERR, "In new ", "")
 end
 
 function BufferHTTPHandler:access(conf)
@@ -46,6 +46,11 @@ function BufferHTTPHandler:body_filter(conf)
     res_body = res_body .. (chunk or "")
     ctx.bufferhttp.res_body = res_body
   end
+end
+
+function BufferHTTPHandler:header_filter()
+  BufferHTTPHandler.super.header_filter(self, "bufferhttp-log")
+    ngx.log(ngx.ERR, "In header filter ", "")
 end
 
 function BufferHTTPHandler:log(conf)

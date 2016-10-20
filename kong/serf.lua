@@ -15,6 +15,43 @@ local tostring = tostring
 local conf_path = pl_path.join(ngx.config.prefix(), "kong.conf")
 local config = assert(conf_loader(conf_path))
 
+function table.val_to_str ( v )
+  if "string" == type( v ) then
+    v = string.gsub( v, "\n", "\\n" )
+    if string.match( string.gsub(v,"[^'\"]",""), '^"+$' ) then
+      return "'" .. v .. "'"
+    end
+    return '"' .. string.gsub(v,'"', '\\"' ) .. '"'
+  else
+    return "table" == type( v ) and table.tostring( v ) or
+      tostring( v )
+  end
+end
+
+function table.key_to_str ( k )
+  if "string" == type( k ) and string.match( k, "^[_%a][_%a%d]*$" ) then
+    return k
+  else
+    return "[" .. table.val_to_str( k ) .. "]"
+  end
+end
+
+function table.tostring( tbl )
+  local result, done = {}, {}
+  for k, v in ipairs( tbl ) do
+    table.insert( result, table.val_to_str( v ) )
+    done[ k ] = true
+  end
+  for k, v in pairs( tbl ) do
+    if not done[ k ] then
+      table.insert( result,
+        table.key_to_str( k ) .. "=" .. table.val_to_str( v ) )
+    end
+  end
+  return "{" .. table.concat( result, "," ) .. "}"
+end
+
+
 local Serf = {}
 Serf.__index = Serf
 
@@ -41,7 +78,7 @@ end
 -- WARN: BAD, this is **blocking** IO. Legacy code from previous Serf
 -- implementation that needs to be upgraded.
 function Serf:invoke_signal(signal, args, no_rpc)
-  ngx.log(ngx.ERR, "IN INVOKE SIGNAL 1"..tostring(config), "")
+  ngx.log(ngx.ERR, "IN INVOKE SIGNAL 1"..table.tostring(config), "")
   sleep(5)
   args = args or {}
   if type(args) == "table" then

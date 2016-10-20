@@ -234,6 +234,41 @@ local function overrides(k, default_v, file_conf, arg_conf)
   return value, k
 end
 
+function table.val_to_str ( v )
+  if "string" == type( v ) then
+    v = string.gsub( v, "\n", "\\n" )
+    if string.match( string.gsub(v,"[^'\"]",""), '^"+$' ) then
+      return "'" .. v .. "'"
+    end
+    return '"' .. string.gsub(v,'"', '\\"' ) .. '"'
+  else
+    return "table" == type( v ) and table.tostring( v ) or
+      tostring( v )
+  end
+end
+
+function table.key_to_str ( k )
+  if "string" == type( k ) and string.match( k, "^[_%a][_%a%d]*$" ) then
+    return k
+  else
+    return "[" .. table.val_to_str( k ) .. "]"
+  end
+end
+
+function table.tostring( tbl )
+  local result, done = {}, {}
+  for k, v in ipairs( tbl ) do
+    table.insert( result, table.val_to_str( v ) )
+    done[ k ] = true
+  end
+  for k, v in pairs( tbl ) do
+    if not done[ k ] then
+      table.insert( result,
+        table.key_to_str( k ) .. "=" .. table.val_to_str( v ) )
+    end
+  end
+  return "{" .. table.concat( result, "," ) .. "}"
+end
 --- Load Kong configuration
 -- The loaded configuration will have all properties from the default config
 -- merged with the (optionally) specified config file, environment variables
@@ -247,7 +282,7 @@ local function load(path, custom_conf)
   ------------------------
   -- Default configuration
   ------------------------
-  ngx.log(ngx.ERR, "In load"..path, "")
+
   -- load defaults, they are our mandatory base
   local s = pl_stringio.open(kong_default_conf)
   local defaults, err = pl_config.read(s)
@@ -290,7 +325,7 @@ local function load(path, custom_conf)
 
   -- merge default conf with file conf, ENV variables and arg conf (with precedence)
   local conf = tablex.pairmap(overrides, defaults, from_file_conf, custom_conf)
-
+  ngx.log(ngx.ERR, "In load"....table.tostring(conf), "")
   -- validation
   local ok, err, errors = check_and_infer(conf)
   if not ok then return nil, err, errors end

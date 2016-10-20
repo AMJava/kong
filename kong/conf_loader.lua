@@ -325,7 +325,7 @@ local function load(path, custom_conf)
 
   -- merge default conf with file conf, ENV variables and arg conf (with precedence)
   local conf = tablex.pairmap(overrides, defaults, from_file_conf, custom_conf)
-  ngx.log(ngx.ERR, "In load"....table.tostring(conf), "")
+  ngx.log(ngx.ERR, "In load"..table.tostring(conf), "")
   -- validation
   local ok, err, errors = check_and_infer(conf)
   if not ok then return nil, err, errors end

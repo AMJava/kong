@@ -247,7 +247,7 @@ local function load(path, custom_conf)
   ------------------------
   -- Default configuration
   ------------------------
-
+  ngx.log(ngx.ERR, "In load"..path, "")
   -- load defaults, they are our mandatory base
   local s = pl_stringio.open(kong_default_conf)
   local defaults, err = pl_config.read(s)

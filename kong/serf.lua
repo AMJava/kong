@@ -7,6 +7,12 @@ local pl_file = require "pl.file"
 local cjson = require "cjson.safe"
 local log = require "kong.cmd.utils.log"
 local socker = require "socket"
+local pl_path = require "pl.path"
+local conf_loader = require "kong.conf_loader"
+
+-- retrieve kong_config
+local conf_path = pl_path.join(ngx.config.prefix(), "kong.conf")
+local config = assert(conf_loader(conf_path))
 
 local Serf = {}
 Serf.__index = Serf

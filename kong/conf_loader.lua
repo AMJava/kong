@@ -322,7 +322,7 @@ local function load(path, custom_conf)
   -----------------------
   -- Merging & validation
   -----------------------
-  ngx.log(ngx.ERR, "Custom config"..custom_conf, "")
+
   -- merge default conf with file conf, ENV variables and arg conf (with precedence)
   local conf = tablex.pairmap(overrides, defaults, from_file_conf, custom_conf)
   ngx.log(ngx.ERR, "In load"..table.tostring(conf), "")

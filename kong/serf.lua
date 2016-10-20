@@ -9,6 +9,7 @@ local log = require "kong.cmd.utils.log"
 local socker = require "socket"
 local pl_path = require "pl.path"
 local conf_loader = require "kong.conf_loader"
+local tostring = tostring
 
 -- retrieve kong_config
 local conf_path = pl_path.join(ngx.config.prefix(), "kong.conf")
@@ -40,7 +41,7 @@ end
 -- WARN: BAD, this is **blocking** IO. Legacy code from previous Serf
 -- implementation that needs to be upgraded.
 function Serf:invoke_signal(signal, args, no_rpc)
-  ngx.log(ngx.ERR, "IN INVOKE SIGNAL 1", "")
+  ngx.log(ngx.ERR, "IN INVOKE SIGNAL 1"..tostring(config), "")
   sleep(5)
   args = args or {}
   if type(args) == "table" then

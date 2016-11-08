@@ -8,7 +8,7 @@ return {
     flush_timeout = {type = "number", default = 2},
     log_bodies = {type = "boolean", default = false},
     connection_timeout = {type = "number", default = 30},
-    endpoint = {type = "string", required = true, default = "http://"},
+    endpoint = {type = "string", required = true, default = "TEST"},
     https_verify = {type = "boolean", default = false},
     secure_message = {type = "boolean", default = false},
     add_request_id = {type = "boolean", default = true},

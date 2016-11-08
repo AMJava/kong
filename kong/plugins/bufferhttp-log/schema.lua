@@ -13,6 +13,6 @@ return {
     secure_message = {type = "boolean", default = false},
     add_request_id = {type = "boolean", default = true},
     secure_patterns = {type = "array", default = { "(assword\":)\"(.-)\"", "(token\":)\"(.-)\""}},
-    default_app_key = {type = "string", default = "default app key"},
+    default_app_key = {type = "string", default = "test"},
   }
 }

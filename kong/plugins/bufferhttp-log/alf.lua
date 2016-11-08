@@ -47,7 +47,7 @@ function _M.new(log_bodies,max_msg_size,secure_message,secure_patterns,default_a
     max_msg_size = max_msg_size,
     secure_message = secure_message,
     secure_patterns = secure_patterns,
-    default_app_key = default_app_key
+    default_app_key = default_app_key,
     entries = {}
   }
 

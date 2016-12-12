@@ -24,7 +24,6 @@ local req_get_headers = ngx.req.get_headers
 local req_set_header = ngx.req.set_header
 local req_get_uri_args = ngx.req.get_uri_args
 local req_raw_header = ngx.req.raw_header
-local upstream_url = ngx.var.upstream_host
 local setmetatable = setmetatable
 local tonumber = tonumber
 
@@ -166,7 +165,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   request_headers["event_name"]= "http"
   request_headers["dm_is_error"]= isError
   request_headers["dm_is_timeout"]= isTimeOut
-  request_headers["dm_upstream_url"]= upstream_url	
+  request_headers["dm_upstream_url"]= ngx.var.upstream_host	
 	
   self.entries[idx] = {
     source = "KONG_API",

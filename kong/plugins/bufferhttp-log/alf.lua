@@ -24,7 +24,7 @@ local req_get_headers = ngx.req.get_headers
 local req_set_header = ngx.req.set_header
 local req_get_uri_args = ngx.req.get_uri_args
 local req_raw_header = ngx.req.raw_header
-local upstream_url = ngx.ctx.upstream_url
+local upstream_url = ngx.var.upstream_host
 local setmetatable = setmetatable
 local tonumber = tonumber
 

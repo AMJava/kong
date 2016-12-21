@@ -10,7 +10,7 @@ end
 function OAuthHandler:access(conf)
   OAuthHandler.super.access(self)  
   
-  if ngx.req.get_method() == "GET" and conf.ignore_patern ~= nil and conf.ignore_patern and ngx.re.match(ngx.var.request_uri, conf.ignore_patern) then
+  if ngx.req.get_method() == "GET" and conf.ignore_patern ~= nil and conf.ignore_patern ~= "" and ngx.re.match(ngx.var.request_uri, conf.ignore_patern) then
     ngx.log(ngx.ERR, "IJNIINIININNNNIN:"..conf.ignore_patern..":", "")   
   else
     ngx.log(ngx.ERR, "ELSELESELESLELELELESLESLESLEELLSEESLESL: ", "")

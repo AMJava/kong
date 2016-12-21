@@ -9,7 +9,10 @@ end
 
 function OAuthHandler:access(conf)
   OAuthHandler.super.access(self)
-  ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ", "")
+  ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "..ngx.ctx.api.request_path, "")
+  ngx.log(ngx.ERR, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBB: "..ngx.var.request_uri, "")
+  ngx.log(ngx.ERR, "CCCCCCCCCCCCCCCCCCCCCCCCCCCC: "..ngx.ctx.api.request_path, "")
+  ngx.log(ngx.ERR, "DDDDDDDDDDDDDDDDDDDDDDDDDDD: "..ngx.ctx.api.request_path, "")
   access.execute(conf)
 end
 

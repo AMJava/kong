@@ -9,7 +9,7 @@ end
 
 function OAuthHandler:access(conf)
   OAuthHandler.super.access(self)
-  ngx.log(ngx.ERR, "TESTESTTESTTESTESTESTESTESTSTEREREERSRESRSE", "")  
+  ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ", "")
   access.execute(conf)
 end
 

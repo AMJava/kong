@@ -1,5 +1,6 @@
 local BasePlugin = require "kong.plugins.base_plugin"
 local access = require "kong.plugins.oauth2.access"
+local pl_stringx = require "pl.stringx"
 
 local OAuthHandler = BasePlugin:extend()
 

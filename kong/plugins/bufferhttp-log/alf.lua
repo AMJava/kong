@@ -117,8 +117,8 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   local req_body_size = tonumber(request_content_len)
   local resp_body_size = tonumber(resp_content_len)
 
-  if ngx.re.match(ngx.var.request_uri, "(/oauth2/token)") then
-    ngx.log(ngx.ERR, "OAUTH IS TRUE", "")
+  if ngx.re.match(ngx.var.request_uri, "/oauth2/token") then
+    ngx.log(ngx.ERR, "TETEEEEEEEEEEEEEEEEEEEETETTETTETETETETETEETEETTEETTETE", "")
     isOauth2 = "true"		
   end
 	

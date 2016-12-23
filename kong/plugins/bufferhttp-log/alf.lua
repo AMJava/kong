@@ -118,20 +118,18 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
 
   if req_body_str then
     req_body_size = #req_body_str
+		
+    if self.log_request then
+      post_data = req_body_str		
+    end
   end
 
   if resp_body_str then
     resp_body_size = #resp_body_str
-  end
-	
-  if self.log_bodies then
-    if req_body_str then
-      post_data = req_body_str
-    end
-
-    if resp_body_str then
-      response_content = resp_body_str
-    end
+		
+    if self.log_response then
+      response_content = resp_body_str	
+    end		
   end
 
   -- timings

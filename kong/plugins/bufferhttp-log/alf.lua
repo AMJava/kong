@@ -41,9 +41,11 @@ local _mt = {
   __index = _M
 }
 
-function _M.new(log_bodies,max_msg_size,secure_message,secure_patterns,default_app_key)
+function _M.new(log_request,log_response,log_oauth2_response,max_msg_size,secure_message,secure_patterns,default_app_key)
   local alf = {
-    log_bodies = log_bodies,
+    log_request = log_request,
+    log_response = log_response,
+    log_oauth2_response = log_oauth2_response,
     max_msg_size = max_msg_size,
     secure_message = secure_message,
     secure_patterns = secure_patterns,
@@ -83,7 +85,9 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
     return nil, "arg #4 (conf) must be a table"
   end
 
-  self.log_bodies = conf.log_bodies
+  self.log_request = conf.log_request
+  self.log_response = conf.log_response
+  self.log_oauth2_response = conf.log_oauth2_response
   self.max_msg_size = conf.max_msg_size_mb
   self.secure_message = conf.secure_message
   self.secure_patterns = conf.secure_patterns

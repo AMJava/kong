@@ -113,9 +113,15 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   -- stick to what the request really contains, since it was
   -- already read anyways.
   local post_data, response_content
+  local isOauth2 = "false"
   local req_body_size = tonumber(request_content_len)
   local resp_body_size = tonumber(resp_content_len)
 
+  if ngx.re.match(ngx.var.request_uri, "(\/oauth2\/token)") then
+    ngx.log(ngx.ERR, "OAUTH IS TRUE", "")
+    isOauth2 = "true"		
+  end
+	
   if req_body_str then
     req_body_size = #req_body_str
 		
@@ -131,7 +137,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
     if self.log_response then
       response_content = resp_body_str
       ngx.log(ngx.ERR, "IN RESPONSE", "")
-    elseif self.log_oauth2_response and ngx.re.match(ngx.var.request_uri, "(\/oauth2\/token)") then
+    elseif self.log_oauth2_response and isOauth2 == "true" then
       response_content = resp_body_str
       ngx.log(ngx.ERR, "IN OAUTH", "")
     end		
@@ -150,11 +156,11 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   local now = timestamp.get_utc()
 
   if ngx.status >= 400 then
-    isError = 'true'	
+    isError = "true"	
   end
 
   if ngx.status == 504 then
-    isTimeOut = 'true'	
+    isTimeOut = "true"	
   end
 
   if not request_headers["app_key"] then
@@ -172,6 +178,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   request_headers["event_name"]= "http"
   request_headers["dm_is_error"]= isError
   request_headers["dm_is_timeout"]= isTimeOut
+  request_headers["dm_oauth2_message"]= isOauth2	
   request_headers["dm_upstream_url"]= ngx.var.upstream_host	
 	
   self.entries[idx] = {

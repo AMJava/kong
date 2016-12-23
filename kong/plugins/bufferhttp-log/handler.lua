@@ -80,4 +80,6 @@ function BufferHTTPHandler:log(conf)
   buf:add_entry(ngx, req_body, res_body,conf)
 end
 
+BufferHTTPHandler.PRIORITY = 2000
+
 return BufferHTTPHandler

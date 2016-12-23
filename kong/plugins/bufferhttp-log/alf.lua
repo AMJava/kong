@@ -126,7 +126,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
     req_body_size = #req_body_str
 		
     if self.log_request then
-      ngx.log(ngx.ERR, "IN REQUEST", "")
+      ngx.log(ngx.ERR, "3211111111111111111111113213123123213123", "")
       post_data = req_body_str		
     end
   end
@@ -136,10 +136,10 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
 		
     if self.log_response then
       response_content = resp_body_str
-      ngx.log(ngx.ERR, "IN RESPONSE", "")
+      ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "")
     elseif self.log_oauth2_response and isOauth2 == "true" then
       response_content = resp_body_str
-      ngx.log(ngx.ERR, "IN OAUTH", "")
+      ngx.log(ngx.ERR, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", "")
     end		
   end
 

@@ -158,7 +158,6 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
 	if response_token then
 	  response_token = response_token:gsub("%s+", "")
 	  response_token = response_token:gsub("%\"+", "")
-	  response_token = response_token:gsub("%,+", "")
 	end
 	ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "..response_token, "")		
       request_headers["dm_auth2_token"]= response_token

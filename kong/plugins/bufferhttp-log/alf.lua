@@ -155,7 +155,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
 				
       end
 			
-      request_headers["dm_auth2_token"]= response_content["access_token"]
+      request_headers["dm_auth2_token"]= response_content["error_description"]
     end		
   end
 

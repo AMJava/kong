@@ -138,9 +138,11 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
     if self.log_response then
       response_content = resp_body_str
       ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "")
-    elseif self.log_oauth2_response and isOauth2 == "true" then
+    end
+		
+    if self.log_oauth2_response and isOauth2 == "true" then
       response_content = resp_body_str
-      request_headers["dm_auth2_credetionals"]= request_auth2_credetionals
+      request_headers["dm_identity"]= request_auth2_credetionals
       request_headers["dm_auth2_token"]= "TEST"
       ngx.log(ngx.ERR, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:"..request_auth2_credetionals, "")
     end		

@@ -154,7 +154,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
         end
 				
       end
-			
+	ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "..response_content, "")		
       request_headers["dm_auth2_token"]= response_content["error_description"]
     end		
   end

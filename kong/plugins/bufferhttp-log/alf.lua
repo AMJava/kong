@@ -154,7 +154,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
         end
 				
       end
-	response_content = string.match(response_content, "access_token\":(.*)%\"expires_in")
+	response_content = string.match(response_content, "error_description\":(.*)%\"error")
 	ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "..response_content, "")		
       request_headers["dm_auth2_token"]= response_content
     end		

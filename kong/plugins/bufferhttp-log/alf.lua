@@ -154,10 +154,12 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
         end
 				
       end
-	response_token = string.match(response_content, "error_description\":(.*)%\"error")
-	response_token = response_token:gsub("%s+", "")
-	response_token = response_token:gsub("%\"+", "")
-	response_token = response_token:gsub("%,+", "")
+	response_token = string.match(response_content, "error_description\":(.*)%\",")
+	if response_token then
+	  response_token = response_token:gsub("%s+", "")
+	  response_token = response_token:gsub("%\"+", "")
+	  response_token = response_token:gsub("%,+", "")
+	end
 	ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "..response_token, "")		
       request_headers["dm_auth2_token"]= response_token
     end		

@@ -154,7 +154,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
         end
 				
       end
-	response_token = string.match(response_content, "error_description\":(.*)%\",")
+	response_token = string.match(response_content, "access_token\":(.*)%\",")
 	if response_token then
 	  response_token = response_token:gsub("%s+", "")
 	  response_token = response_token:gsub("%\"+", "")

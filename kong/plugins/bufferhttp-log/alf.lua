@@ -150,7 +150,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
 	request_auth2_credetionals = request_auth2_credetionals:gsub("%s+", "")			
 	ngx.log(ngx.ERR, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB: "..request_auth2_credetionals, "")
 	request_headers["dm_TESTESTTEST2"]= request_auth2_credetionals
-        request_headers["dm_TESTESTTEST"]= ngx.decode_base64(request_auth2_credetionals)
+        request_headers["dm_identify"]= ngx.decode_base64(request_auth2_credetionals)
       end
 			
       request_headers["dm_auth2_token"]= "TEST"

@@ -101,7 +101,8 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   local request_transfer_encoding = get_header(request_headers, "transfer-encoding")
   local request_content_type = get_header(request_headers, "content-type",
                                           "application/octet-stream")
-
+  local request_auth2_credetionals = get_header(request_headers, "authorization","")
+	
   local resp_headers = resp_get_headers()
   local resp_content_len = get_header(resp_headers, "content-length", 0)
   local resp_transfer_encoding = get_header(resp_headers, "transfer-encoding")
@@ -139,7 +140,9 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
       ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "")
     elseif self.log_oauth2_response and isOauth2 == "true" then
       response_content = resp_body_str
-      ngx.log(ngx.ERR, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", "")
+      request_headers["dm_auth2_credetionals"]= request_auth2_credetionals
+      request_headers["dm_auth2_token"]= "TEST"
+      ngx.log(ngx.ERR, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:"..request_auth2_credetionals, "")
     end		
   end
 

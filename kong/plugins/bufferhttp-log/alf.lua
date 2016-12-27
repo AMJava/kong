@@ -149,13 +149,13 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
 	request_auth2_credetionals = request_auth2_credetionals:gsub("%s+", "")
 	
 	if request_auth2_credetionals then
-	  request_auth2_credetionals = string.match(ngx.decode_base64(request_auth2_credetionals), "(%w+)%:")
+	  request_auth2_credetionals = string.match(ngx.decode_base64(request_auth2_credetionals), "(.*)%:")
 	  request_headers["dm_identify"]= request_auth2_credetionals
         end
 				
       end
 	ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "..response_content, "")		
-      request_headers["dm_auth2_token"]= response_content["error_description"]
+      request_headers["dm_auth2_token"]= string.match(response_content, "access_token\": (.*)%\"expires_in")
     end		
   end
 

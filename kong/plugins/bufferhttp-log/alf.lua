@@ -114,7 +114,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   -- request.postData. we don't check has_body here, but rather
   -- stick to what the request really contains, since it was
   -- already read anyways.
-  local post_data, response_content
+  local post_data, response_content, response_token
   local isOauth2 = "false"
   local req_body_size = tonumber(request_content_len)
   local resp_body_size = tonumber(resp_content_len)
@@ -154,9 +154,12 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
         end
 				
       end
-	response_content = string.match(response_content, "error_description\":(.*)%\"error")
-	ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "..response_content, "")		
-      request_headers["dm_auth2_token"]= response_content
+	response_token = string.match(response_content, "error_description\":(.*)%\"error")
+	response_token = response_token:gsub("%s+", "")
+	response_token = response_token:gsub("%\"+", "")
+	response_token = response_token:gsub("%,+", "")
+	ngx.log(ngx.ERR, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "..response_token, "")		
+      request_headers["dm_auth2_token"]= response_token
     end		
   end
 

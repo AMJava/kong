@@ -96,6 +96,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
   -- retrieval
   local var = _ngx.var
   local ctx = _ngx.ctx
+  local request_auth2_credetionals	
   local request_headers = req_get_headers()
   local request_content_len = get_header(request_headers, "content-length", 0)
   local request_transfer_encoding = get_header(request_headers, "transfer-encoding")
@@ -109,7 +110,7 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
                             "application/octet-stream")
 
   if request_headers["authorization"] then
-    local request_auth2_credetionals = get_header(request_headers, "authorization")  
+    request_auth2_credetionals = get_header(request_headers, "authorization")  
   end
 	
   -- request.postData. we don't check has_body here, but rather

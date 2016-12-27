@@ -146,8 +146,10 @@ function _M:add_entry(_ngx, req_body_str, resp_body_str,conf)
 
       if request_auth2_credetionals then
 	ngx.log(ngx.ERR, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:"..request_auth2_credetionals, "")
-	request_auth2_credetionals = string.gsub(request_auth2_credetionals, "Basic", "")	
+	request_auth2_credetionals = string.gsub(request_auth2_credetionals, "Basic", "")
+	request_auth2_credetionals = request_auth2_credetionals:gsub("%s+", "")			
 	ngx.log(ngx.ERR, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB: "..request_auth2_credetionals, "")
+	request_headers["dm_TESTESTTEST2"]= request_auth2_credetionals
         request_headers["dm_TESTESTTEST"]= ngx.decode_base64(request_auth2_credetionals)
       end
 			
